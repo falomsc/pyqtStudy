@@ -39,7 +39,11 @@ qMainWindow
 |--qDockWidget
     |--qWidget3(qVBoxLayout2)
         |--qTreeWidget
-
+            |--qTreeWidgetItem1
+                |--qTreeWidgetItem2
+                |   |--qTreeWidgetItem3
+                |--qTreeWidgetItem4
+                    |--qTreeWidgetItem5
 
 '''
 import sys
@@ -54,15 +58,17 @@ class Ui_MainWindow():
         qMainWindow.resize(860, 506)
         self.qWidget1 = QtWidgets.QWidget(qMainWindow)
         self.qScrollArea = QtWidgets.QScrollArea(self.qWidget1)
-        self.qScrollArea.setGeometry(QRect(20, 20, 541, 261))
-        self.qScrollArea.setMinimumSize(QSize(200,0))
+        self.qScrollArea.setGeometry(QRect(20, 20, 541, 361))
+        self.qScrollArea.setMinimumSize(QSize(200, 0))
         self.qScrollArea.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustIgnored)
+        self.qScrollArea.setWidgetResizable(True)
         self.qScrollArea.setAlignment(Qt.AlignCenter)
         self.qWidget2 = QtWidgets.QWidget(self.qScrollArea)
         self.qWidget2.setGeometry(QRect(0, 0, 539, 359))
         self.qVBoxLayout1 = QtWidgets.QVBoxLayout(self.qWidget2)
         self.qLabel = QtWidgets.QLabel(self.qWidget2)
         self.qLabel.setAlignment(Qt.AlignCenter)
+        self.qLabel.setText("待显示图片")
         self.qVBoxLayout1.addWidget(self.qLabel)
         self.qScrollArea.setWidget(self.qWidget2)
         qMainWindow.setCentralWidget(self.qWidget1)
@@ -149,6 +155,7 @@ class Ui_MainWindow():
         self.qDockWidget = QtWidgets.QDockWidget(qMainWindow)
         self.qDockWidget.setFeatures(QtWidgets.QDockWidget.AllDockWidgetFeatures)
         self.qDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.qDockWidget.setWindowTitle("图片目录树")
         self.qWidget3 = QtWidgets.QWidget(self.qDockWidget)
         self.qVBoxLayout2 = QtWidgets.QVBoxLayout(self.qWidget3)
         self.qTreeWidget = QtWidgets.QTreeWidget(self.qWidget3)
@@ -156,23 +163,34 @@ class Ui_MainWindow():
         self.qTreeWidget.headerItem().setTextAlignment(0, Qt.AlignCenter)
         self.qTreeWidget.headerItem().setTextAlignment(1, Qt.AlignCenter)
         self.qTreeWidget.header().setDefaultSectionSize(150)
-
+        self.qTreeWidget.headerItem().setText(0, "节点")
+        self.qTreeWidget.headerItem().setText(1, "节点类型")
+        qTreeWidgetItem1 = QtWidgets.QTreeWidgetItem(self.qTreeWidget)
+        qTreeWidgetItem1.setIcon(0, QIcon("./image/15.ico"))
+        qTreeWidgetItem2 = QtWidgets.QTreeWidgetItem(qTreeWidgetItem1)
+        qTreeWidgetItem2.setIcon(0, QIcon("./image/open3.bmp"))
+        qTreeWidgetItem3 = QtWidgets.QTreeWidgetItem(qTreeWidgetItem2)
+        qTreeWidgetItem3.setIcon(0, QIcon("./image/31.ico"))
+        qTreeWidgetItem3.setFlags(Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+        qTreeWidgetItem4 = QtWidgets.QTreeWidgetItem(qTreeWidgetItem1)
+        qTreeWidgetItem4.setIcon(0, QIcon("./image/open3.bmp"))
+        qTreeWidgetItem5 = QtWidgets.QTreeWidgetItem(qTreeWidgetItem4)
+        qTreeWidgetItem5.setIcon(0, QIcon("./image/31.ico"))
+        self.qTreeWidget.topLevelItem(0).setText(0, "图片文件")
+        self.qTreeWidget.topLevelItem(0).child(0).setText(0, "分组节点")
+        self.qTreeWidget.topLevelItem(0).child(0).child(0).setText(0, "图片节点")
+        self.qTreeWidget.topLevelItem(0).child(1).setText(0, "分组2")
+        self.qTreeWidget.topLevelItem(0).child(1).child(0).setText(0, "图片2")
         self.qVBoxLayout2.addWidget(self.qTreeWidget)
         self.qDockWidget.setWidget(self.qWidget3)
         qMainWindow.addDockWidget(Qt.DockWidgetArea(1), self.qDockWidget)
 
 
-
-
-
-
-
 class QmyMainWindow(QtWidgets.QMainWindow):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
 
 
 if __name__ == '__main__':
