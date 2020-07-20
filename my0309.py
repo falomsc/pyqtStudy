@@ -53,12 +53,15 @@ qMainWindow
 （2）然后根据树关系生成qTreeWidgetItem
 （3）设置text的时候根据qTreeWidget.topLevelItem(n).child(n)
 2，注意self.setCentralWidget(self.ui.qScrollArea)改变布局
+3，添加图片功能好像有问题
+4，代码分析
+
 
 '''
 import sys
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import QRect, Qt, QSize, pyqtSlot, QDir, QFileInfo
-from PyQt5.QtGui import QIcon, QCursor
+from PyQt5.QtGui import QIcon, QCursor, QPixmap
 from PyQt5.QtWidgets import QListView, QFileDialog
 
 
@@ -216,6 +219,8 @@ class Ui_MainWindow():
         self.qAction10.setObjectName("qAction10")
         self.qAction11.setObjectName("qAction11")
         self.qAction12.setObjectName("qAction12")
+        self.qTreeWidget.setObjectName("qTreeWidget")
+        self.qDockWidget.setObjectName("qDockWidget")
 
         self.qAction5.triggered.connect(qMainWindow.close)
         QtCore.QMetaObject.connectSlotsByName(qMainWindow)
@@ -227,6 +232,8 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.curPixmap = QPixmap()
+        self.pixRatio = 1
         self.itemFlags = (Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled | Qt.ItemIsAutoTristate)
         self.setCentralWidget(self.ui.qScrollArea)
 
@@ -240,7 +247,7 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         self.ui.qTreeWidget.addTopLevelItem(item)
 
     @pyqtSlot()
-    def on_qAction1_triggered(self):
+    def on_qAction1_triggered(self):    # 添加目录
         dirStr = QFileDialog.getExistingDirectory()
         # if dirStr == "":
         #     return
@@ -261,7 +268,7 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         parItem.setExpanded(True)
 
     @pyqtSlot()
-    def on_qAction2_triggered(self):
+    def on_qAction2_triggered(self):    # 添加文件
         fileList, flt = QFileDialog.getOpenFileNames(self, "选择一个或多个文件", "", "Images(*.jpg)")
         if (len(fileList)<1):
             return
@@ -285,6 +292,108 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             parItem.addChild(item)
         parItem.setExpanded(True)
 
+    @pyqtSlot()
+    def on_qAction3_triggered(self):    # 删除节点
+        item = self.ui.qTreeWidget.currentItem()
+        parItem = item.parent()
+        parItem.removeChild(item)
+
+    def __changeItemCaption(self, item):
+        title = "*" + item.text(0)
+        item.setText(0, title)
+        if item.childCount() > 0:
+            for i in range(item.childCount()):
+                self.__changeItemCaption(item.child(i))
+
+    def __displayImage(self, item):
+        filename = item.data(0, Qt.UserRole)
+        self.ui.qStatusBar.showMessage(filename)
+        self.curPixmap.load(filename)
+        self.on_qAction10_triggered()
+        self.ui.qAction6.setEnabled(True)
+        self.ui.qAction7.setEnabled(True)
+        self.ui.qAction8.setEnabled(True)
+        self.ui.qAction9.setEnabled(True)
+        self.ui.qAction10.setEnabled(True)
+
+
+    @pyqtSlot()
+    def on_qAction4_triggered(self):    # 遍历节点
+        count = self.ui.qTreeWidget.topLevelItemCount()
+        for i in range(count):
+            item = self.ui.qTreeWidget.topLevelItem(i)
+            self.__changeItemCaption(item)
+
+    def on_qTreeWidget_currentItemChanged(self, current, previous):
+        if current == None:
+            return
+        nodeType = current.type()
+        if nodeType == 1001:
+            self.ui.qAction1.setEnabled(True)
+            self.ui.qAction2.setEnabled(True)
+            self.ui.qAction3.setEnabled(False)
+        elif nodeType == 1002:
+            self.ui.qAction1.setEnabled(True)
+            self.ui.qAction2.setEnabled(True)
+            self.ui.qAction3.setEnabled(True)
+        elif nodeType == 1003:
+            self.ui.qAction1.setEnabled(False)
+            self.ui.qAction2.setEnabled(True)
+            self.ui.qAction3.setEnabled(True)
+            self.__displayImage(current)
+
+    @pyqtSlot()
+    def on_qAction10_triggered(self):   # 适合高度
+        H = self.ui.qScrollArea.height()
+        realH = self.curPixmap.height()
+        self.pixRatio = float(H)/realH
+        pix = self.curPixmap.scaledToHeight(H-30)
+        self.ui.qLabel.setPixmap(pix)
+
+    @pyqtSlot()
+    def on_qAction9_triggered(self):    # 适合宽度
+        W = self.ui.qScrollArea.width()-20
+        realW = self.curPixmap.width()
+        self.pixRatio = float(W)/realW
+        pix = self.curPixmap.scaledToWidth(W-30)
+        self.ui.qLabel.setPixmap(pix)
+
+    @pyqtSlot()
+    def on_qAction8_triggered(self):    # 实际大小
+        self.pixRatio = 1
+        self.ui.qLabel.setPixmap(self.curPixmap)
+
+    @pyqtSlot()
+    def on_qAction6_triggered(self):    # 放大
+        self.pixRatio *= 1.2
+        W = self.pixRatio * self.curPixmap.width()
+        H = self.pixRatio * self.curPixmap.height()
+        pix = self.curPixmap.scaled(W, H)
+        self.ui.qLabel.setPixmap(pix)
+
+    @pyqtSlot()
+    def on_qAction7_triggered(self):    # 缩小
+        self.pixRatio *= 0.8
+        W = self.pixRatio * self.curPixmap.width()
+        H = self.pixRatio * self.curPixmap.height()
+        pix = self.curPixmap.scaled(W, H)
+        self.ui.qLabel.setPixmap(pix)
+
+    @pyqtSlot(bool)
+    def on_qAction11_triggered(self, checked):  # 窗体浮动
+        self.ui.qDockWidget.setFloating(checked)
+
+    @pyqtSlot(bool)
+    def on_qDockWidget_topLevelChanged(self, topLevel):
+        self.ui.qAction11.setChecked(topLevel)
+
+    @pyqtSlot(bool)
+    def on_qAction12_triggered(self, checked):  # 窗口可见
+        self.ui.qDockWidget.setVisible(checked)
+
+    @pyqtSlot(bool)
+    def on_qDockWidget_visibilityChanged(self, visible):
+        self.ui.qAction12.setChecked(visible)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
