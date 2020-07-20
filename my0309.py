@@ -45,12 +45,21 @@ qMainWindow
                 |--qTreeWidgetItem4
                     |--qTreeWidgetItem5
 
+问题：
+
+总结：
+1，注意qTreeWidget
+（1）先设置列setColumnCount，headerItem即为表头
+（2）然后根据树关系生成qTreeWidgetItem
+（3）设置text的时候根据qTreeWidget.topLevelItem(n).child(n)
+2，注意self.setCentralWidget(self.ui.qScrollArea)改变布局
+
 '''
 import sys
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import QRect, Qt, QSize, pyqtSlot
+from PyQt5.QtCore import QRect, Qt, QSize, pyqtSlot, QDir, QFileInfo
 from PyQt5.QtGui import QIcon, QCursor
-from PyQt5.QtWidgets import QListView
+from PyQt5.QtWidgets import QListView, QFileDialog
 
 
 class Ui_MainWindow():
@@ -88,6 +97,7 @@ class Ui_MainWindow():
         self.qAction3 = QtWidgets.QAction(qMainWindow)
         self.qAction3.setText("删除节点")
         self.qAction3.setIcon(QIcon("./image/delete1.bmp"))
+        self.qAction3.setEnabled(False)
         self.qAction4 = QtWidgets.QAction(qMainWindow)
         self.qAction4.setText("遍历节点")
         self.qAction4.setIcon(QIcon("./image/fold.bmp"))
@@ -97,18 +107,23 @@ class Ui_MainWindow():
         self.qAction6 = QtWidgets.QAction(qMainWindow)
         self.qAction6.setText("放大")
         self.qAction6.setIcon(QIcon("./image/418.bmp"))
+        self.qAction6.setEnabled(False)
         self.qAction7 = QtWidgets.QAction(qMainWindow)
         self.qAction7.setText("缩小")
         self.qAction7.setIcon(QIcon("./image/416.bmp"))
+        self.qAction7.setEnabled(False)
         self.qAction8 = QtWidgets.QAction(qMainWindow)
         self.qAction8.setText("实际大小")
         self.qAction8.setIcon(QIcon("./image/414.bmp"))
+        self.qAction8.setEnabled(False)
         self.qAction9 = QtWidgets.QAction(qMainWindow)
         self.qAction9.setText("适合宽度")
         self.qAction9.setIcon(QIcon("./image/424.bmp"))
+        self.qAction9.setEnabled(False)
         self.qAction10 = QtWidgets.QAction(qMainWindow)
         self.qAction10.setText("适合高度")
         self.qAction10.setIcon(QIcon("./image/426.bmp"))
+        self.qAction10.setEnabled(False)
         self.qMenu1.addAction(self.qAction1)
         self.qMenu1.addAction(self.qAction2)
         self.qMenu1.addAction(self.qAction3)
@@ -129,9 +144,13 @@ class Ui_MainWindow():
         self.qAction11 = QtWidgets.QAction(qMainWindow)
         self.qAction11.setText("窗体浮动")
         self.qAction11.setIcon(QIcon("./image/814.bmp"))
+        self.qAction11.setCheckable(True)
+        self.qAction11.setChecked(False)
         self.qAction12 = QtWidgets.QAction(qMainWindow)
         self.qAction12.setText("窗体可见")
         self.qAction12.setIcon(QIcon("./image/414.bmp"))
+        self.qAction12.setCheckable(True)
+        self.qAction12.setChecked(True)
         self.qToolBar.addAction(self.qAction1)
         self.qToolBar.addAction(self.qAction2)
         self.qToolBar.addAction(self.qAction3)
@@ -185,12 +204,86 @@ class Ui_MainWindow():
         self.qDockWidget.setWidget(self.qWidget3)
         qMainWindow.addDockWidget(Qt.DockWidgetArea(1), self.qDockWidget)
 
+        self.qAction1.setObjectName("qAction1")
+        self.qAction2.setObjectName("qAction2")
+        self.qAction3.setObjectName("qAction3")
+        self.qAction4.setObjectName("qAction4")
+        self.qAction5.setObjectName("qAction5")
+        self.qAction6.setObjectName("qAction6")
+        self.qAction7.setObjectName("qAction7")
+        self.qAction8.setObjectName("qAction8")
+        self.qAction9.setObjectName("qAction9")
+        self.qAction10.setObjectName("qAction10")
+        self.qAction11.setObjectName("qAction11")
+        self.qAction12.setObjectName("qAction12")
+
+        self.qAction5.triggered.connect(qMainWindow.close)
+        QtCore.QMetaObject.connectSlotsByName(qMainWindow)
+
 
 class QmyMainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.itemFlags = (Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled | Qt.ItemIsAutoTristate)
+        self.setCentralWidget(self.ui.qScrollArea)
+
+        self.ui.qTreeWidget.clear()
+        item = QtWidgets.QTreeWidgetItem(1001)
+        item.setIcon(0, QIcon("./image/15.ico"))
+        item.setText(0, "图片文件")
+        item.setFlags(self.itemFlags)
+        item.setCheckState(0, Qt.Checked)
+        item.setData(0, Qt.UserRole, "")
+        self.ui.qTreeWidget.addTopLevelItem(item)
+
+    @pyqtSlot()
+    def on_qAction1_triggered(self):
+        dirStr = QFileDialog.getExistingDirectory()
+        # if dirStr == "":
+        #     return
+        parItem = self.ui.qTreeWidget.currentItem()
+        if parItem == None:
+            parItem = self.ui.qTreeWidget.topLevelItem(0)
+
+        dirObj = QDir(dirStr)
+        nodeText = dirObj.dirName()
+
+        item = QtWidgets.QTreeWidgetItem(1002)
+        item.setIcon(0, QIcon("./image/open3.bmp"))
+        item.setText(0, nodeText)
+        item.setText(1, "Group")
+        item.setFlags(self.itemFlags)
+        item.setData(0, Qt.UserRole, dirStr)
+        parItem.addChild(item)
+        parItem.setExpanded(True)
+
+    @pyqtSlot()
+    def on_qAction2_triggered(self):
+        fileList, flt = QFileDialog.getOpenFileNames(self, "选择一个或多个文件", "", "Images(*.jpg)")
+        if (len(fileList)<1):
+            return
+        item = self.ui.qTreeWidget.currentItem()
+        if (item.type() == 1003):
+            parItem = item.parent()
+        else:
+            parItem = item
+        for i in range(len(fileList)):
+            fullFileName = fileList[i]
+            fileinfo = QFileInfo(fullFileName)
+            nodeText = fileinfo.fileName()
+
+            item = QtWidgets.QTreeWidgetItem(1003)
+            item.setIcon(0, QIcon("./image/31.ico"))
+            item.setText(0, nodeText)
+            item.setText(1, "Image")
+            item.setFlags(self.itemFlags)
+            item.setCheckState(0, Qt.Checked)
+            item.setData(0, Qt.UserRole, fullFileName)
+            parItem.addChild(item)
+        parItem.setExpanded(True)
 
 
 if __name__ == '__main__':
