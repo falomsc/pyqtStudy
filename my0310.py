@@ -7,7 +7,7 @@ qMainWindow
 import sys
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import QRect, Qt, QSize, pyqtSlot, QDir, QFileInfo
-from PyQt5.QtGui import QIcon, QCursor
+from PyQt5.QtGui import QIcon, QCursor, QBrush
 from PyQt5.QtWidgets import QListView, QFileDialog, QFrame
 
 
@@ -54,17 +54,23 @@ class Ui_MainWindow():
         self.qPushButton10.setText("读取表格内容到文本")
         self.qCheckBox1 = QtWidgets.QCheckBox(self.qGroupBox)
         self.qCheckBox1.setText("表格可编辑")
+        self.qCheckBox1.setChecked(True)
         self.qCheckBox2 = QtWidgets.QCheckBox(self.qGroupBox)
         self.qCheckBox2.setText("间隔行底色")
+        self.qCheckBox2.setChecked(True)
         self.qCheckBox3 = QtWidgets.QCheckBox(self.qGroupBox)
         self.qCheckBox3.setText("显示行表头")
+        self.qCheckBox3.setChecked(True)
         self.qCheckBox4 = QtWidgets.QCheckBox(self.qGroupBox)
         self.qCheckBox4.setText("显示列表头")
+        self.qCheckBox4.setChecked(True)
         self.qRadioButton1 = QtWidgets.QRadioButton(self.qGroupBox)
         self.qRadioButton1.setText("行选择")
         self.qRadioButton2 = QtWidgets.QRadioButton(self.qGroupBox)
         self.qRadioButton2.setText("单元格选择")
+        self.qRadioButton2.setChecked(True)
         self.qSpinBox = QtWidgets.QSpinBox(self.qGroupBox)
+        self.qSpinBox.setValue(8)
 
         self.qGridLayout.addWidget(self.qPushButton1, 0, 0, 1, 2)
         self.qGridLayout.addWidget(self.qPushButton2, 1, 0, 1, 1)
@@ -89,23 +95,118 @@ class Ui_MainWindow():
         self.qTableWidget.setAlternatingRowColors(True)
         self.qTableWidget.setRowCount(5)
         self.qTableWidget.setColumnCount(4)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.qTableWidget.setHorizontalHeaderItem(0, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.qTableWidget.setHorizontalHeaderItem(1, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.qTableWidget.setHorizontalHeaderItem(2, item)
+        self.qTableWidget.horizontalHeader().setDefaultSectionSize(100)
+        self.qTableWidget.verticalHeader().setDefaultSectionSize(30)
+        item = QtWidgets.QTableWidgetItem()
+        item.setText("列1")
+        self.qTableWidget.setHorizontalHeaderItem(0, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setText("列2")
+        self.qTableWidget.setHorizontalHeaderItem(1, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setText("列3")
+        self.qTableWidget.setHorizontalHeaderItem(2, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setText("0行，0列")
+        self.qTableWidget.setItem(0, 0, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setIcon(QIcon("./image/boy.ico"))
+        item.setText("0行，1列")
+        self.qTableWidget.setItem(0, 1, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setCheckState(Qt.Checked)
+        item.setText("0行，2列")
+        self.qTableWidget.setItem(0, 2, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setText("0行，3列")
+        self.qTableWidget.setItem(0, 3, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setText("1行，0列")
+        self.qTableWidget.setItem(1, 0, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setIcon(QIcon("./image/girl.ico"))
+        item.setText("1行，1列")
+        self.qTableWidget.setItem(1, 1, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setCheckState(Qt.Checked)
+        self.qTableWidget.setItem(1, 2, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setText("2行，0列")
+        self.qTableWidget.setItem(2, 0, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.qTableWidget.setItem(2, 1, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.qTableWidget.setItem(2, 2, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setText("3行，0列")
+        self.qTableWidget.setItem(3, 0, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.qTableWidget.setItem(3, 1, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setText("4行，0列")
+        self.qTableWidget.setItem(4, 0, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.qTableWidget.setItem(4, 1, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.qTableWidget.setItem(4, 2, item)
+        item = QtWidgets.QTableWidgetItem()
+        item.setText("4行，3列")
+        self.qTableWidget.setItem(4, 3, item)
 
+        self.qPushButton1.setObjectName("qPushButton1")
+        self.qPushButton2.setObjectName("qPushButton2")
+        self.qPushButton3.setObjectName("qPushButton3")
+        self.qPushButton4.setObjectName("qPushButton4")
+        self.qPushButton5.setObjectName("qPushButton5")
+        self.qPushButton6.setObjectName("qPushButton6")
+        self.qPushButton7.setObjectName("qPushButton7")
+        self.qPushButton8.setObjectName("qPushButton8")
+        self.qPushButton9.setObjectName("qPushButton9")
+        self.qPushButton10.setObjectName("qPushButton10")
+        self.qCheckBox1.setObjectName("qCheckBox1")
+        self.qCheckBox2.setObjectName("qCheckBox2")
+        self.qCheckBox3.setObjectName("qCheckBox3")
+        self.qCheckBox4.setObjectName("qCheckBox4")
+        self.qRadioButton1.setObjectName("qRadioButton1")
+        self.qRadioButton2.setObjectName("qRadioButton2")
+        self.qSpinBox.setObjectName("qSpinBox")
 
-
-
-
+        QtCore.QMetaObject.connectSlotsByName(qMainWindow)
 
 class QmyMainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.qLabel1 = QtWidgets.QLabel("当前单元格坐标：", self)
+        self.qLabel1.setMidLineWidth(250)
+        self.qLabel2 = QtWidgets.QLabel("当前单元格类型：", self)
+        self.qLabel2.setMidLineWidth(200)
+        self.qLabel3 = QtWidgets.QLabel("学生ID：", self)
+        self.qLabel3.setMidLineWidth(200)
+        self.ui.qStatusBar.addWidget(self.qLabel1)
+        self.ui.qStatusBar.addWidget(self.qLabel2)
+        self.ui.qStatusBar.addWidget(self.qLabel3)
+        self.__tableInitialized = False
+
+    @pyqtSlot()
+    def on_qPushButton1_clicked(self):
+        headerText = ["姓 名","性 别","出生日期","民 族","分数","是否党员"]
+        self.ui.qTableWidget.setColumnCount(len(headerText))
+        for i in range(len(headerText)):
+            headerItem = QtWidgets.QTableWidgetItem(headerText[i])
+            font = headerItem.font()
+            font.setPointSize(11)
+            headerItem.setFont(font)
+            headerItem.setForeground(QBrush(Qt.red))
+            self.ui.qTableWidget.setHorizontalHeaderItem(i, headerItem)
+
+    @pyqtSlot()
+    def on_qPushButton2_clicked(self):
+        self.ui.qTableWidget.setRowCount(self.ui.qSpinBox.value())
+        self.ui.qTableWidget.setAlternatingRowColors(self.ui.qCheckBox2.isChecked())
+
 
 
 if __name__ == '__main__':
