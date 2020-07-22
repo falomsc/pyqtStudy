@@ -5,10 +5,12 @@ qMainWindow
 
 '''
 import sys
+from enum import Enum
+
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import QRect, Qt, QSize, pyqtSlot, QDir, QFileInfo
+from PyQt5.QtCore import QRect, Qt, QSize, pyqtSlot, QDir, QFileInfo, QDate
 from PyQt5.QtGui import QIcon, QCursor, QBrush
-from PyQt5.QtWidgets import QListView, QFileDialog, QFrame
+from PyQt5.QtWidgets import QListView, QFileDialog, QFrame, QAbstractItemView, QTableWidgetItem, QLabel
 
 
 class Ui_MainWindow():
@@ -20,7 +22,7 @@ class Ui_MainWindow():
         self.qSplitter1 = QtWidgets.QSplitter(self.qWidget1)
         self.qSplitter1.setOrientation(Qt.Horizontal)
         self.qGroupBox = QtWidgets.QGroupBox(self.qSplitter1)
-        self.qGroupBox.setMaximumSize(QSize(300,16777215))
+        self.qGroupBox.setMaximumSize(QSize(300, 16777215))
         self.qGridLayout = QtWidgets.QGridLayout(self.qGroupBox)
         self.qSplitter2 = QtWidgets.QSplitter(self.qSplitter1)
         self.qSplitter2.setOrientation(Qt.Vertical)
@@ -30,7 +32,6 @@ class Ui_MainWindow():
         qMainWindow.setCentralWidget(self.qWidget1)
         qMainWindow.setStatusBar(self.qStatusBar)
         self.qVBoxLayout.addWidget(self.qSplitter1)
-
 
         self.qPushButton1 = QtWidgets.QPushButton(self.qGroupBox)
         self.qPushButton1.setText("设置表头")
@@ -170,29 +171,97 @@ class Ui_MainWindow():
         self.qRadioButton1.setObjectName("qRadioButton1")
         self.qRadioButton2.setObjectName("qRadioButton2")
         self.qSpinBox.setObjectName("qSpinBox")
+        self.qTableWidget.setObjectName("qTableWidget")
 
         QtCore.QMetaObject.connectSlotsByName(qMainWindow)
 
+
+class CellType(Enum):  ##各单元格的类型
+    ctName = 1000
+    ctSex = 1001
+    ctBirth = 1002
+    ctNation = 1003
+    ctScore = 1004
+    ctPartyM = 1005
+
+
+class FieldColNum(Enum):  ##各字段在表格中的列号
+    colName = 0
+    colSex = 1
+    colBirth = 2
+    colNation = 3
+    colScore = 4
+    colPartyM = 5
+
+
 class QmyMainWindow(QtWidgets.QMainWindow):
+
+    ###################################################################
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
         self.qLabel1 = QtWidgets.QLabel("当前单元格坐标：", self)
-        self.qLabel1.setMidLineWidth(250)
+        self.qLabel1.setMinimumWidth(250)
         self.qLabel2 = QtWidgets.QLabel("当前单元格类型：", self)
-        self.qLabel2.setMidLineWidth(200)
+        self.qLabel2.setMinimumWidth(200)
         self.qLabel3 = QtWidgets.QLabel("学生ID：", self)
-        self.qLabel3.setMidLineWidth(200)
+        self.qLabel3.setMinimumWidth(200)
         self.ui.qStatusBar.addWidget(self.qLabel1)
         self.ui.qStatusBar.addWidget(self.qLabel2)
         self.ui.qStatusBar.addWidget(self.qLabel3)
         self.__tableInitialized = False
 
+    def __createItemsARow(self, rowNo, name, sex, birth, nation, isParty, score):
+
+        StudID = 201805000 + rowNo
+        item = QtWidgets.QTableWidgetItem(name, 1000)
+        item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        font = item.font()
+        font.setBold(True)
+        item.setFont(font)
+        item.setData(Qt.UserRole, StudID)
+
+        self.ui.qTableWidget.setItem(rowNo, 0, item)
+        if sex == "男":
+            icon = QIcon("./image/boy.ico")
+        else:
+            icon = QIcon("./image/girl.ico")
+        item = QtWidgets.QTableWidgetItem(sex, 1001)
+        item.setIcon(icon)
+        item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.ui.qTableWidget.setItem(rowNo, 1, item)
+
+        strBirth = birth.toString("yyyy-MM-dd")
+        item = QtWidgets.QTableWidgetItem(strBirth, 1002)
+        item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.ui.qTableWidget.setItem(rowNo, 2, item)
+
+        item = QtWidgets.QTableWidgetItem(nation, 1003)
+        item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        if nation != "汉族":
+            item.setForeground(QBrush(Qt.blue))
+        self.ui.qTableWidget.setItem(rowNo, 3, item)
+
+        strScore = str(score)
+        item = QtWidgets.QTableWidgetItem(strScore, 1004)
+        item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.ui.qTableWidget.setItem(rowNo, 4, item)
+
+        item = QtWidgets.QTableWidgetItem("党员", 1005)
+        item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        if isParty:
+            item.setCheckState(Qt.Checked)
+        else:
+            item.setCheckState(Qt.Unchecked)
+        item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
+        item.setBackground(QBrush(Qt.yellow))
+        self.ui.qTableWidget.setItem(rowNo, 5, item)
+
     @pyqtSlot()
-    def on_qPushButton1_clicked(self):
-        headerText = ["姓 名","性 别","出生日期","民 族","分数","是否党员"]
+    def on_qPushButton1_clicked(self):  # 设置表头
+        headerText = ["姓 名", "性 别", "出生日期", "民 族", "分数", "是否党员"]
         self.ui.qTableWidget.setColumnCount(len(headerText))
         for i in range(len(headerText)):
             headerItem = QtWidgets.QTableWidgetItem(headerText[i])
@@ -203,10 +272,122 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             self.ui.qTableWidget.setHorizontalHeaderItem(i, headerItem)
 
     @pyqtSlot()
-    def on_qPushButton2_clicked(self):
+    def on_qPushButton2_clicked(self):  # 设置行数
         self.ui.qTableWidget.setRowCount(self.ui.qSpinBox.value())
         self.ui.qTableWidget.setAlternatingRowColors(self.ui.qCheckBox2.isChecked())
 
+    @pyqtSlot()
+    def on_qPushButton3_clicked(self):  # 初始化表格数据
+        self.ui.qTableWidget.clearContents()
+        birth = QDate(1998, 6, 23)
+        isParty = True
+        nation = "汉族"
+        score = 70
+        rowCount = self.ui.qTableWidget.rowCount()
+        for i in range(rowCount):
+            strName = "学生%d" % i
+            if i % 2 == 0:
+                strSex = "男"
+            else:
+                strSex = "女"
+            self.__createItemsARow(i, strName, strSex, birth, nation, isParty, score)
+            birth = birth.addDays(20)
+            isParty = not isParty
+        self.__tableInitialized = True
+
+    @pyqtSlot()
+    def on_qPushButton4_clicked(self):  # 插入行
+        curRow = self.ui.qTableWidget.currentRow()
+        self.ui.qTableWidget.insertRow(curRow)
+        birth = QDate.fromString("1998-4-5", "yyyy-M-d")
+        self.__createItemsARow(curRow, "新学生", "男", birth, "苗族", True, 65)
+
+    @pyqtSlot()
+    def on_qPushButton5_clicked(self):  # 添加行
+        curRow = self.ui.qTableWidget.rowCount()
+        self.ui.qTableWidget.insertRow(curRow)
+        birth = QDate.fromString("1999-1-10", "yyyy-M-d")
+        self.__createItemsARow(curRow, "新生", "女", birth, "土家", False, 86)
+
+    @pyqtSlot()
+    def on_qPushButton6_clicked(self):  # 删除当前行
+        curRow = self.ui.qTableWidget.currentRow()
+        self.ui.qTableWidget.removeRow(curRow)
+
+    @pyqtSlot()
+    def on_qPushButton7_clicked(self):  # 清空表格内容
+        self.ui.qTableWidget.clearContents()
+
+    @pyqtSlot()
+    def on_qPushButton8_clicked(self):  # 自动调节行高
+        self.ui.qTableWidget.resizeRowsToContents()
+
+    @pyqtSlot()
+    def on_qPushButton9_clicked(self):  # 自动调节行高
+        self.ui.qTableWidget.resizeColumnsToContents()
+
+    @pyqtSlot()
+    def on_qPushButton10_clicked(self):  # 读取表格内容到文本
+        self.ui.qPlainTextEdit.clear()
+        rowCount = self.ui.qTableWidget.rowCount()
+        colCount = self.ui.qTableWidget.columnCount()
+        for i in range(rowCount):
+            strText = "第 %d 行" % (i + 1)
+            for j in range(colCount - 1):
+                cellItem = self.ui.qTableWidget.item(i, j)
+                strText = strText + cellItem.text() + " "
+            cellItem = self.ui.qTableWidget.item(i, colCount - 1)
+            if (cellItem.checkState() == Qt.Checked):
+                strText = strText + "党员"
+            else:
+                strText = strText + "群众"
+            self.ui.qPlainTextEdit.appendPlainText(strText)
+
+    @pyqtSlot(bool)
+    def on_qCheckBox1_clicked(self, checked):  # 表格可编辑
+        if checked:
+            trig = QAbstractItemView.DoubleClicked | QAbstractItemView.SelectedClicked
+        else:
+            trig = QAbstractItemView.NoEditTriggers
+        self.ui.qTableWidget.setEditTriggers(trig)
+
+    @pyqtSlot(bool)
+    def on_qCheckBox2_clicked(self, checked):  # 间隔行底色
+        self.ui.qTableWidget.setAlternatingRowColors(checked)
+
+    @pyqtSlot(bool)
+    def on_qCheckBox3_clicked(self, checked):  # 显示行表头
+        self.ui.qTableWidget.horizontalHeader().setVisible(checked)
+
+    @pyqtSlot(bool)
+    def on_qCheckBox4_clicked(self, checked):  # 显示列表头
+        self.ui.qTableWidget.verticalHeader().setVisible(checked)
+
+    @pyqtSlot()
+    def on_qRadioButton1_clicked(self):  # 行选择
+        selMode = QAbstractItemView.SelectRows
+        self.ui.qTableWidget.setSelectionBehavior(selMode)
+
+    @pyqtSlot()
+    def on_qRadioButton2_clicked(self):  # 单元格选择
+        selMode = QAbstractItemView.SelectItems
+        self.ui.qTableWidget.setSelectionBehavior(selMode)
+
+    @pyqtSlot(int, int, int, int)
+    def on_qTableWidget_currentCellChanged(self, currentRow, currentColumn, previousRow, previousColumn):
+        if (self.__tableInitialized == False):
+            return
+        item = self.ui.qTableWidget.item(currentRow, currentColumn)
+        if (item == None):
+            return
+        self.qLabel1.setText("当前单元格：%d行，%d列" % (currentRow, currentColumn))
+        itemCellType = item.type()
+        self.qLabel2.setText("当前单元格类型：%d" % itemCellType)
+
+        item2 = self.ui.qTableWidget.item(currentRow, 0)
+        studID = item2.data(Qt.UserRole)
+        print(studID)
+        self.qLabel3.setText("学生ID：%d" % studID)
 
 
 if __name__ == '__main__':
