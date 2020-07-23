@@ -369,7 +369,6 @@ class QmyMainWindow(QtWidgets.QMainWindow):
 
         item2 = self.ui.qTableWidget.item(currentRow, 0)
         studID = item2.data(Qt.UserRole)
-        print(studID)
         self.qLabel3.setText("学生ID：%d" % studID)
 
 
