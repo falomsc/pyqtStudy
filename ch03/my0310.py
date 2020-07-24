@@ -111,7 +111,7 @@ class Ui_MainWindow():
         item.setText("0行，0列")
         self.qTableWidget.setItem(0, 0, item)
         item = QtWidgets.QTableWidgetItem()
-        item.setIcon(QIcon("./image/boy.ico"))
+        item.setIcon(QIcon("../image/boy.ico"))
         item.setText("0行，1列")
         self.qTableWidget.setItem(0, 1, item)
         item = QtWidgets.QTableWidgetItem()
@@ -125,7 +125,7 @@ class Ui_MainWindow():
         item.setText("1行，0列")
         self.qTableWidget.setItem(1, 0, item)
         item = QtWidgets.QTableWidgetItem()
-        item.setIcon(QIcon("./image/girl.ico"))
+        item.setIcon(QIcon("../image/girl.ico"))
         item.setText("1行，1列")
         self.qTableWidget.setItem(1, 1, item)
         item = QtWidgets.QTableWidgetItem()
@@ -208,9 +208,9 @@ class QmyMainWindow(QtWidgets.QMainWindow):
 
         self.ui.qTableWidget.setItem(rowNo, 0, item)
         if sex == "男":
-            icon = QIcon("./image/boy.ico")
+            icon = QIcon("../image/boy.ico")
         else:
-            icon = QIcon("./image/girl.ico")
+            icon = QIcon("../image/girl.ico")
         item = QtWidgets.QTableWidgetItem(sex, 1001)
         item.setIcon(icon)
         item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)

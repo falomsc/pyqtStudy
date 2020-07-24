@@ -61,7 +61,7 @@ class Ui_Widget():
         QtCore.QMetaObject.connectSlotsByName(qWidget)
 
         ############################  Init  ##################################
-        self.qComboBox1.addItem(QIcon("./image/aim.ico"), "北京市")
+        self.qComboBox1.addItem(QIcon("../image/aim.ico"), "北京市")
         self.qComboBox1.addItem("上海市")
 
 class QmyWidget(QtWidgets.QWidget):
@@ -74,7 +74,7 @@ class QmyWidget(QtWidgets.QWidget):
         self.ui.qComboBox1.clear()
         provinces = ["山东", "河北", "河南", "湖北", "湖南", "广东"]
         for i in provinces:
-            self.ui.qComboBox1.addItem(QIcon("./image/unit.ico"), i)
+            self.ui.qComboBox1.addItem(QIcon("../image/unit.ico"), i)
 
     def on_qPushButton2_clicked(self):
         self.ui.qComboBox2.clear()
@@ -90,7 +90,7 @@ class QmyWidget(QtWidgets.QWidget):
     def on_qPushButton3_clicked(self):
         cities = {"北京": 10, "上海": 21, "天津": 22, "徐州": 516, "福州": 591, "青岛": 532}
         for k in cities:
-            self.ui.qComboBox2.addItem(QIcon("./image/unit.ico"), k, cities[k])
+            self.ui.qComboBox2.addItem(QIcon("../image/unit.ico"), k, cities[k])
 
     @pyqtSlot(str)
     def on_qComboBox2_currentIndexChanged(self, text):

@@ -73,7 +73,7 @@ class Ui_MainWindow():
         self.qToolBox.setFrameShape(QtWidgets.QFrame.Panel)
         self.qWidget2 = QtWidgets.QWidget(self.qToolBox)
         # self.qWidget2.setGeometry(QRect(0, 0, 148, 299))
-        self.qToolBox.addItem(self.qWidget2,  QIcon("./image/408.bmp"), "QListWidget操作")
+        self.qToolBox.addItem(self.qWidget2, QIcon("../image/408.bmp"), "QListWidget操作")
         self.qGridLayout = QtWidgets.QGridLayout(self.qWidget2)
         self.qToolButton1 = QtWidgets.QToolButton(self.qToolBox)
         self.qToolButton1.setMinimumSize(QSize(120, 25))
@@ -102,9 +102,9 @@ class Ui_MainWindow():
         self.qGridLayout.addWidget(self.qToolButton4, 3, 0, 1, 1)
         self.qGridLayout.addWidget(self.qToolButton5, 4, 0, 1, 1)
         self.qWidget3 = QtWidgets.QWidget(self.qToolBox)
-        self.qToolBox.addItem(self.qWidget3, QIcon("./image/410.bmp"), "QTreeWidget[空]")
+        self.qToolBox.addItem(self.qWidget3, QIcon("../image/410.bmp"), "QTreeWidget[空]")
         self.qWidget4 = QtWidgets.QWidget(self.qToolBox)
-        self.qToolBox.addItem(self.qWidget4, QIcon("./image/412.bmp"), "QTableWidget[空]")
+        self.qToolBox.addItem(self.qWidget4, QIcon("../image/412.bmp"), "QTableWidget[空]")
 
         self.qTabWidget = QtWidgets.QTabWidget(self.qSplitter)
         self.qTabWidget.setTabPosition(QtWidgets.QTabWidget.North)
@@ -152,13 +152,13 @@ class Ui_MainWindow():
         self.qListWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.qListWidget.setSortingEnabled(False)
         item = QtWidgets.QListWidgetItem(self.qListWidget)
-        item.setIcon(QIcon("./image/724.bmp"))
+        item.setIcon(QIcon("../image/724.bmp"))
         item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEditable | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
         item.setText("New item")
         item.setCheckState(Qt.Checked)
         self.qListWidget.addItem(item)
         item = QtWidgets.QListWidgetItem(self.qListWidget)
-        item.setIcon(QIcon("./image/724.bmp"))
+        item.setIcon(QIcon("../image/724.bmp"))
         item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEditable | Qt.ItemIsDragEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
         item.setText("New item2")
         item.setCheckState(Qt.Unchecked)
@@ -175,19 +175,19 @@ class Ui_MainWindow():
         self.qToolBar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.qAction1 = QtWidgets.QAction(qMainWindow)
         self.qAction1.setText("初始化列表")
-        self.qAction1.setIcon(QIcon("./image/128.bmp"))
+        self.qAction1.setIcon(QIcon("../image/128.bmp"))
         self.qAction2 = QtWidgets.QAction(qMainWindow)
         self.qAction2.setText("清除列表")
-        self.qAction2.setIcon(QIcon("./image/delete1.bmp"))
+        self.qAction2.setIcon(QIcon("../image/delete1.bmp"))
         self.qAction3 = QtWidgets.QAction(qMainWindow)
         self.qAction3.setText("插入项")
-        self.qAction3.setIcon(QIcon("./image/424.bmp"))
+        self.qAction3.setIcon(QIcon("../image/424.bmp"))
         self.qAction4 = QtWidgets.QAction(qMainWindow)
         self.qAction4.setText("添加项")
-        self.qAction4.setIcon(QIcon("./image/316.bmp"))
+        self.qAction4.setIcon(QIcon("../image/316.bmp"))
         self.qAction5 = QtWidgets.QAction(qMainWindow)
         self.qAction5.setText("删除当前项")
-        self.qAction5.setIcon(QIcon("./image/324.bmp"))
+        self.qAction5.setIcon(QIcon("../image/324.bmp"))
         self.qToolBar.addAction(self.qAction1)
         self.qToolBar.addAction(self.qAction2)
         self.qToolBar.addAction(self.qAction3)
@@ -198,7 +198,7 @@ class Ui_MainWindow():
         qMainWindow.addToolBar(self.qToolBar)
         self.qAction6 = QtWidgets.QAction(qMainWindow)
         self.qAction6.setText("项选择")
-        self.qAction6.setIcon(QIcon("./image/124.bmp"))
+        self.qAction6.setIcon(QIcon("../image/124.bmp"))
         self.qAction7 = QtWidgets.QAction(qMainWindow)
         self.qAction7.setText("全选")
         self.qAction8 = QtWidgets.QAction(qMainWindow)
@@ -207,7 +207,7 @@ class Ui_MainWindow():
         self.qAction9.setText("反选")
         self.qAction10 = QtWidgets.QAction(qMainWindow)
         self.qAction10.setText("退出")
-        self.qAction10.setIcon(QIcon("./image/132.bmp"))
+        self.qAction10.setIcon(QIcon("../image/132.bmp"))
 
         self.qAction1.setObjectName("qAction1")
         self.qAction2.setObjectName("qAction2")
@@ -272,7 +272,7 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         self.__FlagNotEditable = (Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled )
 
     def on_qAction1_triggered(self):    # 初始化列表
-        icon = QIcon("./image/724.bmp")
+        icon = QIcon("../image/724.bmp")
         editable = self.ui.qCheckBox.isChecked()
         if editable:
             Flag = self.__FlagEditable
@@ -298,7 +298,7 @@ class QmyMainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def on_qAction3_triggered(self):    # 插入项
-        icon = QIcon("./image/724.bmp")
+        icon = QIcon("../image/724.bmp")
         editable = self.ui.qCheckBox.isChecked()
         if editable:
             Flag = self.__FlagEditable
@@ -314,7 +314,7 @@ class QmyMainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def on_qAction4_triggered(self):    # 添加项
-        icon = QIcon("./image/724.bmp")
+        icon = QIcon("../image/724.bmp")
         editable = self.ui.qCheckBox.isChecked()
         if editable:
             Flag = self.__FlagEditable

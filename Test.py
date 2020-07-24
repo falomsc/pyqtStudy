@@ -1,304 +1,174 @@
 import sys
-from enum import Enum
-
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import QRect, Qt, QSize, pyqtSlot, QDir, QFileInfo, QDate
-from PyQt5.QtGui import QIcon, QCursor, QBrush
-from PyQt5.QtWidgets import QListView, QFileDialog, QFrame, QAbstractItemView, QTableWidgetItem, QLabel
+from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5.QtCore import Qt, QRect
+from PyQt5.QtGui import QIcon
 
 
 class Ui_MainWindow():
-    def setupUi(self, qMainWindow):
-        qMainWindow.resize(837, 471)
-        self.qWidget1 = QtWidgets.QWidget(qMainWindow)
-        self.qVBoxLayout = QtWidgets.QVBoxLayout(self.qWidget1)
-        self.qStatusBar = QtWidgets.QStatusBar(qMainWindow)
-        self.qSplitter1 = QtWidgets.QSplitter(self.qWidget1)
-        self.qSplitter1.setOrientation(Qt.Horizontal)
-        self.qGroupBox = QtWidgets.QGroupBox(self.qSplitter1)
-        self.qGroupBox.setMaximumSize(QSize(300, 16777215))
-        self.qGridLayout = QtWidgets.QGridLayout(self.qGroupBox)
-        self.qSplitter2 = QtWidgets.QSplitter(self.qSplitter1)
-        self.qSplitter2.setOrientation(Qt.Vertical)
-        self.qSplitter2.setFrameShape(QFrame.NoFrame)
-        self.qSplitter2.setFrameShadow(QFrame.Plain)
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(753, 403)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        MainWindow.setFont(font)
+        self.centralWidget = QtWidgets.QWidget(MainWindow)
+        self.centralWidget.setObjectName("centralWidget")
+        self.splitter = QtWidgets.QSplitter(self.centralWidget)
+        self.splitter.setGeometry(QtCore.QRect(100, 40, 532, 261))
+        self.splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter.setObjectName("splitter")
+        self.groupBox = QtWidgets.QGroupBox(self.splitter)
+        self.groupBox.setObjectName("groupBox")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.groupBox)
+        self.verticalLayout.setContentsMargins(4, 4, 4, 4)
+        self.verticalLayout.setSpacing(6)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.tableView = QtWidgets.QTableView(self.groupBox)
+        self.tableView.setEditTriggers(
+            QtWidgets.QAbstractItemView.AnyKeyPressed | QtWidgets.QAbstractItemView.DoubleClicked | QtWidgets.QAbstractItemView.EditKeyPressed | QtWidgets.QAbstractItemView.SelectedClicked)
+        self.tableView.setAlternatingRowColors(True)
+        self.tableView.setObjectName("tableView")
+        self.verticalLayout.addWidget(self.tableView)
+        self.groupBox_2 = QtWidgets.QGroupBox(self.splitter)
+        self.groupBox_2.setObjectName("groupBox_2")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.groupBox_2)
+        self.verticalLayout_2.setContentsMargins(4, 4, 4, 4)
+        self.verticalLayout_2.setSpacing(6)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.groupBox_2)
+        self.plainTextEdit.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
+        self.plainTextEdit.setObjectName("plainTextEdit")
+        self.verticalLayout_2.addWidget(self.plainTextEdit)
+        MainWindow.setCentralWidget(self.centralWidget)
+        self.menuBar = QtWidgets.QMenuBar(MainWindow)
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 753, 23))
+        self.menuBar.setObjectName("menuBar")
+        MainWindow.setMenuBar(self.menuBar)
+        self.mainToolBar = QtWidgets.QToolBar(MainWindow)
+        self.mainToolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.mainToolBar.setObjectName("mainToolBar")
+        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.mainToolBar)
+        self.statusBar = QtWidgets.QStatusBar(MainWindow)
+        self.statusBar.setObjectName("statusBar")
+        MainWindow.setStatusBar(self.statusBar)
+        self.actOpen = QtWidgets.QAction(MainWindow)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/icons/images/open.bmp"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actOpen.setIcon(icon)
+        self.actOpen.setObjectName("actOpen")
+        self.actSave = QtWidgets.QAction(MainWindow)
+        self.actSave.setEnabled(False)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/icons/images/save.bmp"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actSave.setIcon(icon1)
+        self.actSave.setObjectName("actSave")
+        self.actAppend = QtWidgets.QAction(MainWindow)
+        self.actAppend.setEnabled(False)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/icons/images/append.bmp"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actAppend.setIcon(icon2)
+        self.actAppend.setObjectName("actAppend")
+        self.actInsert = QtWidgets.QAction(MainWindow)
+        self.actInsert.setEnabled(False)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/images/306.bmp"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actInsert.setIcon(icon3)
+        self.actInsert.setObjectName("actInsert")
+        self.actDelete = QtWidgets.QAction(MainWindow)
+        self.actDelete.setEnabled(False)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/images/delete.bmp"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actDelete.setIcon(icon4)
+        self.actDelete.setObjectName("actDelete")
+        self.actExit = QtWidgets.QAction(MainWindow)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/images/132.bmp"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actExit.setIcon(icon5)
+        self.actExit.setObjectName("actExit")
+        self.actModelData = QtWidgets.QAction(MainWindow)
+        self.actModelData.setEnabled(False)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/icons/images/export1.bmp"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actModelData.setIcon(icon6)
+        self.actModelData.setObjectName("actModelData")
+        self.actAlignLeft = QtWidgets.QAction(MainWindow)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/icons/images/508.bmp"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actAlignLeft.setIcon(icon7)
+        self.actAlignLeft.setObjectName("actAlignLeft")
+        self.actAlignCenter = QtWidgets.QAction(MainWindow)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/icons/images/510.bmp"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actAlignCenter.setIcon(icon8)
+        self.actAlignCenter.setObjectName("actAlignCenter")
+        self.actAlignRight = QtWidgets.QAction(MainWindow)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icons/images/512.bmp"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actAlignRight.setIcon(icon9)
+        self.actAlignRight.setObjectName("actAlignRight")
+        self.actFontBold = QtWidgets.QAction(MainWindow)
+        self.actFontBold.setCheckable(True)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(":/icons/images/500.bmp"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actFontBold.setIcon(icon10)
+        self.actFontBold.setObjectName("actFontBold")
+        self.mainToolBar.addAction(self.actOpen)
+        self.mainToolBar.addAction(self.actSave)
+        self.mainToolBar.addAction(self.actModelData)
+        self.mainToolBar.addSeparator()
+        self.mainToolBar.addAction(self.actAppend)
+        self.mainToolBar.addAction(self.actInsert)
+        self.mainToolBar.addAction(self.actDelete)
+        self.mainToolBar.addSeparator()
+        self.mainToolBar.addAction(self.actAlignLeft)
+        self.mainToolBar.addAction(self.actAlignCenter)
+        self.mainToolBar.addAction(self.actAlignRight)
+        self.mainToolBar.addAction(self.actFontBold)
+        self.mainToolBar.addSeparator()
+        self.mainToolBar.addAction(self.actExit)
 
-        qMainWindow.setCentralWidget(self.qWidget1)
-        qMainWindow.setStatusBar(self.qStatusBar)
-        self.qVBoxLayout.addWidget(self.qSplitter1)
+        self.retranslateUi(MainWindow)
+        self.actExit.triggered.connect(MainWindow.close)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        self.qPushButton1 = QtWidgets.QPushButton(self.qGroupBox)
-        self.qPushButton1.setText("设置表头")
-        self.qPushButton2 = QtWidgets.QPushButton(self.qGroupBox)
-        self.qPushButton2.setText("设置行数")
-        self.qPushButton3 = QtWidgets.QPushButton(self.qGroupBox)
-        self.qPushButton3.setText("初始化表格数据")
-        self.qPushButton4 = QtWidgets.QPushButton(self.qGroupBox)
-        self.qPushButton4.setText("插入行")
-        self.qPushButton5 = QtWidgets.QPushButton(self.qGroupBox)
-        self.qPushButton5.setText("添加行")
-        self.qPushButton6 = QtWidgets.QPushButton(self.qGroupBox)
-        self.qPushButton6.setText("删除当前行")
-        self.qPushButton7 = QtWidgets.QPushButton(self.qGroupBox)
-        self.qPushButton7.setText("清空表格数据")
-        self.qPushButton8 = QtWidgets.QPushButton(self.qGroupBox)
-        self.qPushButton8.setText("自动调节行高")
-        self.qPushButton9 = QtWidgets.QPushButton(self.qGroupBox)
-        self.qPushButton9.setText("自动调节列宽")
-        self.qPushButton10 = QtWidgets.QPushButton(self.qGroupBox)
-        self.qPushButton10.setText("读取表格内容到文本")
-        self.qCheckBox1 = QtWidgets.QCheckBox(self.qGroupBox)
-        self.qCheckBox1.setText("表格可编辑")
-        self.qCheckBox1.setChecked(True)
-        self.qCheckBox2 = QtWidgets.QCheckBox(self.qGroupBox)
-        self.qCheckBox2.setText("间隔行底色")
-        self.qCheckBox2.setChecked(True)
-        self.qCheckBox3 = QtWidgets.QCheckBox(self.qGroupBox)
-        self.qCheckBox3.setText("显示行表头")
-        self.qCheckBox3.setChecked(True)
-        self.qCheckBox4 = QtWidgets.QCheckBox(self.qGroupBox)
-        self.qCheckBox4.setText("显示列表头")
-        self.qCheckBox4.setChecked(True)
-        self.qRadioButton1 = QtWidgets.QRadioButton(self.qGroupBox)
-        self.qRadioButton1.setText("行选择")
-        self.qRadioButton2 = QtWidgets.QRadioButton(self.qGroupBox)
-        self.qRadioButton2.setText("单元格选择")
-        self.qRadioButton2.setChecked(True)
-        self.qSpinBox = QtWidgets.QSpinBox(self.qGroupBox)
-        self.qSpinBox.setValue(8)
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Demo4_3, QTableView与QStandardItemModel"))
+        self.groupBox.setTitle(_translate("MainWindow", "tableView"))
+        self.groupBox_2.setTitle(_translate("MainWindow", "plainTextEdit"))
+        self.actOpen.setText(_translate("MainWindow", "打开文件"))
+        self.actOpen.setToolTip(_translate("MainWindow", "打开文件"))
+        self.actSave.setText(_translate("MainWindow", "另存文件"))
+        self.actSave.setToolTip(_translate("MainWindow", "表格内容另存为文件"))
+        self.actAppend.setText(_translate("MainWindow", "添加行"))
+        self.actAppend.setToolTip(_translate("MainWindow", "添加一行"))
+        self.actInsert.setText(_translate("MainWindow", "插入行"))
+        self.actInsert.setToolTip(_translate("MainWindow", "插入一行"))
+        self.actDelete.setText(_translate("MainWindow", "删除行"))
+        self.actDelete.setToolTip(_translate("MainWindow", "删除当前行"))
+        self.actExit.setText(_translate("MainWindow", "退出"))
+        self.actExit.setToolTip(_translate("MainWindow", "退出"))
+        self.actModelData.setText(_translate("MainWindow", "模型数据"))
+        self.actModelData.setToolTip(_translate("MainWindow", "模型数据显示到文本框里"))
+        self.actAlignLeft.setText(_translate("MainWindow", "居左"))
+        self.actAlignLeft.setToolTip(_translate("MainWindow", "文字左对齐"))
+        self.actAlignCenter.setText(_translate("MainWindow", "居中"))
+        self.actAlignCenter.setToolTip(_translate("MainWindow", "文字居中"))
+        self.actAlignRight.setText(_translate("MainWindow", "居右"))
+        self.actAlignRight.setToolTip(_translate("MainWindow", "文字右对齐"))
+        self.actFontBold.setText(_translate("MainWindow", "粗体"))
+        self.actFontBold.setToolTip(_translate("MainWindow", "粗体字体"))
 
-        self.qGridLayout.addWidget(self.qPushButton1, 0, 0, 1, 2)
-        self.qGridLayout.addWidget(self.qPushButton2, 1, 0, 1, 1)
-        self.qGridLayout.addWidget(self.qSpinBox, 1, 1, 1, 1)
-        self.qGridLayout.addWidget(self.qPushButton3, 2, 0, 1, 2)
-        self.qGridLayout.addWidget(self.qPushButton4, 3, 0, 1, 1)
-        self.qGridLayout.addWidget(self.qPushButton5, 3, 1, 1, 1)
-        self.qGridLayout.addWidget(self.qPushButton6, 4, 0, 1, 1)
-        self.qGridLayout.addWidget(self.qPushButton7, 4, 1, 1, 1)
-        self.qGridLayout.addWidget(self.qPushButton8, 5, 0, 1, 1)
-        self.qGridLayout.addWidget(self.qPushButton9, 5, 1, 1, 1)
-        self.qGridLayout.addWidget(self.qPushButton10, 6, 0, 1, 2)
-        self.qGridLayout.addWidget(self.qCheckBox1, 7, 0, 1, 1)
-        self.qGridLayout.addWidget(self.qCheckBox2, 7, 1, 1, 1)
-        self.qGridLayout.addWidget(self.qCheckBox3, 8, 0, 1, 1)
-        self.qGridLayout.addWidget(self.qCheckBox4, 8, 1, 1, 1)
-        self.qGridLayout.addWidget(self.qRadioButton1, 9, 0, 1, 1)
-        self.qGridLayout.addWidget(self.qRadioButton2, 9, 1, 1, 1)
 
-        self.qTableWidget = QtWidgets.QTableWidget(self.qSplitter2)
-        self.qPlainTextEdit = QtWidgets.QPlainTextEdit(self.qSplitter2)
-        self.qTableWidget.setAlternatingRowColors(True)
-        self.qTableWidget.setRowCount(5)
-        self.qTableWidget.setColumnCount(4)
-        self.qTableWidget.horizontalHeader().setDefaultSectionSize(100)
-        self.qTableWidget.verticalHeader().setDefaultSectionSize(30)
-        item = QtWidgets.QTableWidgetItem()
-        item.setText("列1")
-        self.qTableWidget.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setText("列2")
-        self.qTableWidget.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setText("列3")
-        self.qTableWidget.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setText("0行，0列")
-        self.qTableWidget.setItem(0, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setIcon(QIcon("./image/boy.ico"))
-        item.setText("0行，1列")
-        self.qTableWidget.setItem(0, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setCheckState(Qt.Checked)
-        item.setText("0行，2列")
-        self.qTableWidget.setItem(0, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setText("0行，3列")
-        self.qTableWidget.setItem(0, 3, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setText("1行，0列")
-        self.qTableWidget.setItem(1, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setIcon(QIcon("./image/girl.ico"))
-        item.setText("1行，1列")
-        self.qTableWidget.setItem(1, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setCheckState(Qt.Checked)
-        self.qTableWidget.setItem(1, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setText("2行，0列")
-        self.qTableWidget.setItem(2, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.qTableWidget.setItem(2, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.qTableWidget.setItem(2, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setText("3行，0列")
-        self.qTableWidget.setItem(3, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.qTableWidget.setItem(3, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setText("4行，0列")
-        self.qTableWidget.setItem(4, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.qTableWidget.setItem(4, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.qTableWidget.setItem(4, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setText("4行，3列")
-        self.qTableWidget.setItem(4, 3, item)
+import res_rc
 
-        self.qPushButton1.setObjectName("qPushButton1")
-        self.qPushButton2.setObjectName("qPushButton2")
-        self.qPushButton3.setObjectName("qPushButton3")
-        self.qPushButton4.setObjectName("qPushButton4")
-        self.qPushButton5.setObjectName("qPushButton5")
-        self.qPushButton6.setObjectName("qPushButton6")
-        self.qPushButton7.setObjectName("qPushButton7")
-        self.qPushButton8.setObjectName("qPushButton8")
-        self.qPushButton9.setObjectName("qPushButton9")
-        self.qPushButton10.setObjectName("qPushButton10")
-        self.qCheckBox1.setObjectName("qCheckBox1")
-        self.qCheckBox2.setObjectName("qCheckBox2")
-        self.qCheckBox3.setObjectName("qCheckBox3")
-        self.qCheckBox4.setObjectName("qCheckBox4")
-        self.qRadioButton1.setObjectName("qRadioButton1")
-        self.qRadioButton2.setObjectName("qRadioButton2")
-        self.qSpinBox.setObjectName("qSpinBox")
-        self.qTableWidget.setObjectName("qTableWidget")
 
-        QtCore.QMetaObject.connectSlotsByName(qMainWindow)
-
-class CellType(Enum):    ##各单元格的类型
-   ctName=1000
-   ctSex =1001
-   ctBirth =1002
-   ctNation=1003
-   ctScore=1004
-   ctPartyM=1005
-
-class FieldColNum(Enum):   ##各字段在表格中的列号
-   colName=0
-   colSex=1
-   colBirth=2
-   colNation=3
-   colScore=4
-   colPartyM=5
 
 class QmyMainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        super().__init__(parent)  # 调用父类构造函数，创建窗体
-        self.ui = Ui_MainWindow()  # 创建UI对象
-        self.ui.setupUi(self)  # 构造UI界面
-        ##      self.setWindowTitle("Demo3_10，QTableWidget的使用")
-
-        self.LabCellIndex = QLabel("当前单元格坐标：", self)
-        self.LabCellIndex.setMinimumWidth(250)
-        self.LabCellType = QLabel("当前单元格类型：", self)
-        self.LabCellType.setMinimumWidth(200)
-        self.LabStudID = QLabel("学生ID：", self)
-        self.LabStudID.setMinimumWidth(200)
-        self.ui.qStatusBar.addWidget(self.LabCellIndex)  # 加到状态栏
-        self.ui.qStatusBar.addWidget(self.LabCellType)
-        self.ui.qStatusBar.addWidget(self.LabStudID)
-
-        self.ui.qTableWidget.setAlternatingRowColors(True)  # 交替行颜色
-        self.__tableInitialized = False
-
-    def __createItemsARow(self,rowNo,name,sex,birth,nation,isParty,score): ##创建一行的items
-      StudID=201805000+rowNo  #学号
-
-      #姓名
-      item=QTableWidgetItem(name,CellType.ctName.value)
-      item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-      font=item.font()
-      font.setBold(True)
-      item.setFont(font)
-      item.setData(Qt.UserRole,StudID) #关联数据
-      self.ui.qTableWidget.setItem(rowNo,FieldColNum.colName.value,item)
-
-      #性别
-      if (sex=="男"):
-         icon=QIcon(":/icons/images/boy.ico")
-      else:
-         icon=QIcon(":/icons/images/girl.ico")
-      item=QTableWidgetItem(sex,CellType.ctSex.value)
-      item.setIcon(icon)
-      item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-      self.ui.qTableWidget.setItem(rowNo,FieldColNum.colSex.value,item)
-
-      #出生日期
-      strBitrh=birth.toString("yyyy-MM-dd")  #日期转换为字符串
-      item=QTableWidgetItem(strBitrh,CellType.ctBirth.value)
-      item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-      self.ui.qTableWidget.setItem(rowNo,FieldColNum.colBirth.value,item)
-
-      #民族
-      item=QTableWidgetItem(nation,CellType.ctNation.value)
-      item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-      if (nation != "汉族"):
-         item.setForeground(QBrush(Qt.blue))
-      self.ui.qTableWidget.setItem(rowNo,FieldColNum.colNation.value,item)
-
-      #分数
-      strScore=str(score)
-      item=QTableWidgetItem(strScore,CellType.ctScore.value)
-      item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-      self.ui.qTableWidget.setItem(rowNo,FieldColNum.colScore.value,item)
-
-      #党员
-      item=QTableWidgetItem("党员",CellType.ctPartyM.value)
-      item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-      if (isParty==True):
-         item.setCheckState(Qt.Checked)
-      else:
-         item.setCheckState(Qt.Unchecked)
-      item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsUserCheckable) #不允许编辑文字
-      item.setBackground(QBrush(Qt.yellow))      #Qt::green  lightGray  yellow
-      self.ui.qTableWidget.setItem(rowNo,FieldColNum.colPartyM.value,item)   #为单元格设置Item
-
-    @pyqtSlot()  ##初始化表格数据
-    def on_qPushButton3_clicked(self):
-      self.ui.qTableWidget.clearContents()  # 清除表格内容
-
-      birth = QDate(1998, 6, 23)
-      isParty = True
-      nation = "非汉族"
-      score = 70
-
-      rowCount = self.ui.qTableWidget.rowCount()  # 表格行数
-      for i in range(rowCount):
-          strName = "学生%d" % i
-          if ((i % 2) == 0):
-              strSex = "男"
-          else:
-              strSex = "女"
-          self.__createItemsARow(i, strName, strSex,
-                                 birth, nation, isParty, score)
-          birth = birth.addDays(20)
-          isParty = not isParty
-
-      self.__tableInitialized = True  # 表格数据已初始化
-
-
-    @pyqtSlot(int, int, int, int)  ##当前单元格发生变化
-    def on_qTableWidget_currentCellChanged(self, currentRow, currentColumn,
-                                      previousRow, previousColumn):
-      if (self.__tableInitialized == False):  # 表格数据未初始化
-          return
-      item = self.ui.qTableWidget.item(currentRow, currentColumn)  # 当前单元格
-      if (item == None):
-          return
-
-      self.LabCellIndex.setText("当前单元格：%d 行，%d 列"
-                                % (currentRow, currentColumn))
-
-      itemCellType = item.type()  # 获取单元格的类型
-      self.LabCellType.setText("当前单元格类型：%d" % itemCellType)
-
-      item2 = self.ui.qTableWidget.item(currentRow, FieldColNum.colName.value)
-      studID = item2.data(Qt.UserRole)  # 读取用户自定义数据
-      self.LabStudID.setText("学生ID：%d" % studID)
+        super().__init__(parent)
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

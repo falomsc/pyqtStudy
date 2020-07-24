@@ -1,8 +1,8 @@
 import sys
 
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFrame
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtCore import Qt, QDir, QSize
+from PyQt5.QtWidgets import QFrame, QFileSystemModel
 
 
 class Ui_MainWindow():
@@ -11,6 +11,7 @@ class Ui_MainWindow():
         self.qWidget = QtWidgets.QWidget(qMainWindow)
         self.qVBoxLayout1 = QtWidgets.QVBoxLayout(self.qWidget)
         self.qGroupBox1 = QtWidgets.QGroupBox(self.qWidget)
+        self.qGroupBox1.setMaximumSize(QSize(16777215, 75))
         self.qVBoxLayout2 = QtWidgets.QVBoxLayout(self.qGroupBox1)
         self.qSplitter1 = QtWidgets.QSplitter(self.qWidget)
         self.qSplitter1.setOrientation(Qt.Horizontal)
@@ -59,8 +60,9 @@ class Ui_MainWindow():
         self.qTableView = QtWidgets.QTableView(self.qGroupBox4)
         self.qVBoxLayout5.addWidget(self.qTableView)
 
-
+        self.qTreeView.setObjectName("qTreeView")
         qMainWindow.setCentralWidget(self.qWidget)
+        QtCore.QMetaObject.connectSlotsByName(qMainWindow)
 
 
 
@@ -69,6 +71,26 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.model = QFileSystemModel(self)
+        self.model.setRootPath(QDir.currentPath())
+        self.ui.qTreeView.setModel(self.model)
+        self.ui.qListView.setModel(self.model)
+        self.ui.qTableView.setModel(self.model)
+
+        self.ui.qTreeView.clicked.connect(self.ui.qListView.setRootIndex)
+        self.ui.qTreeView.clicked.connect(self.ui.qTableView.setRootIndex)
+
+    def on_qTreeView_clicked(self, index):
+        self.ui.qCheckBox.setChecked(self.model.isDir(index))
+        self.ui.qLabel1.setText(self.model.filePath(index))
+        self.ui.qLabel4.setText(self.model.type(index))
+        self.ui.qLabel2.setText(self.model.fileName(index))
+        fileSize = self.model.size(index)/1024
+        if(fileSize<1024):
+            self.ui.qLabel3.setText("%d KB" % fileSize)
+        else:
+            self.ui.qLabel3.setText("%.2f MB" % (fileSize/1024))
 
 
 if __name__ == '__main__':
