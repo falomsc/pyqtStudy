@@ -5,6 +5,7 @@
 1，注意数据结构
 （1）QListView.setModel(QStringListModel)
 （2）针对QStringListModel进行操作，比如insertRow、removeRow、setData
+（3）index类型是QModelIndex，注意setCurrentIndex。QAbstractItemView类中方法index参数都是QModelIndex类型
 
 '''
 import sys
