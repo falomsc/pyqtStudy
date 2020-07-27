@@ -2,8 +2,9 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.resize(805, 512)
+    def setupUi(self, qMainWindow):
+        qMainWindow.resize(805, 512)
+
 
 
 
