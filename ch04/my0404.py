@@ -1,21 +1,9 @@
-'''
-目前问题：
-
-总结：
-1，QTableView结构非常奇怪
-QTableView.setModel(QStandardItemModel)
-QTableView.setSelectionModel(QItemSelectionModel)
-QItemSelectionModel = QItemSelectionModel(QStandardItemModel)
-2，QTableView内容是QStandardItemModel，而QStandardItemModel中每个单元格都是一个QStandardItem
-3，QTableView最后一列内容有变化
-
-'''
 import os
 import sys
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt, QRect, QItemSelectionModel, pyqtSlot
 from PyQt5.QtGui import QIcon, QFont, QStandardItemModel, QStandardItem
-from PyQt5.QtWidgets import QAbstractItemView, QLabel, QFileDialog
+from PyQt5.QtWidgets import QAbstractItemView, QLabel, QFileDialog, QStyledItemDelegate, QDoubleSpinBox, QComboBox
 
 
 class Ui_MainWindow():
@@ -42,7 +30,8 @@ class Ui_MainWindow():
         self.qGroupBox2.setTitle("plainTextEdit")
         self.qVBoxLayout2 = QtWidgets.QVBoxLayout(self.qGroupBox2)
         self.qTableView = QtWidgets.QTableView(self.qGroupBox1)
-        self.qTableView.setEditTriggers(QtWidgets.QAbstractItemView.AnyKeyPressed | QtWidgets.QAbstractItemView.DoubleClicked | QtWidgets.QAbstractItemView.EditKeyPressed | QtWidgets.QAbstractItemView.SelectedClicked)
+        self.qTableView.setEditTriggers(
+            QtWidgets.QAbstractItemView.AnyKeyPressed | QtWidgets.QAbstractItemView.DoubleClicked | QtWidgets.QAbstractItemView.EditKeyPressed | QtWidgets.QAbstractItemView.SelectedClicked)
         self.qPlainTextEdit = QtWidgets.QPlainTextEdit(self.qGroupBox2)
         self.qVBoxLayout1.addWidget(self.qTableView)
         self.qVBoxLayout2.addWidget(self.qPlainTextEdit)
@@ -158,6 +147,20 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         self.ui.qStatusBar.addWidget(self.qLabel2)
         self.ui.qStatusBar.addPermanentWidget(self.qLabel3)
 
+        self.spinCeshen = QmyFloatSpinDelegate(0, 10000, 0, self)
+        self.spinLength = QmyFloatSpinDelegate(0, 6000, 2, self)
+        self.spinDegree = QmyFloatSpinDelegate(0, 360, 1, self)
+
+        self.ui.qTableView.setItemDelegateForColumn(0, self.spinCeshen)
+        self.ui.qTableView.setItemDelegateForColumn(1, self.spinLength)
+        self.ui.qTableView.setItemDelegateForColumn(3, self.spinLength)
+        self.ui.qTableView.setItemDelegateForColumn(2, self.spinDegree)
+
+        qualities = ["优", "良", "合格", "不合格"]
+        self.comboDelegate = QmyComboBoxDelegate(self)
+        self.comboDelegate.setItems(qualities, False)
+        self.ui.qTableView.setItemDelegateForColumn(4, self.comboDelegate)
+
     def __iniModelFromStringList(self, allLines):
         rowCnt = len(allLines)
         self.itemModel.setRowCount(rowCnt - 1)
@@ -182,8 +185,8 @@ class QmyMainWindow(QtWidgets.QMainWindow):
                 item.setCheckState(Qt.Checked)
             self.itemModel.setItem(i, lastColNo, item)
 
-    def __setCellAlignment(self, align = Qt.AlignHCenter):
-        if(not self.selectionModel.hasSelection()):
+    def __setCellAlignment(self, align=Qt.AlignHCenter):
+        if (not self.selectionModel.hasSelection()):
             return
         selectedIndex = self.selectionModel.selectedIndexes()
         count = len(selectedIndex)
@@ -192,9 +195,8 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             item = self.itemModel.itemFromIndex(index)
             item.setTextAlignment(align)
 
-
     @pyqtSlot()
-    def on_qAction1_triggered(self):    # 打开文件
+    def on_qAction1_triggered(self):  # 打开文件
         curPath = os.getcwd()
         filename, flt = QFileDialog.getOpenFileName(self, "打开一个文件", curPath, "井斜数据文件(*.txt);;所有文件(*.*)")
         if (filename == ""):
@@ -217,10 +219,10 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         self.ui.qAction6.setEnabled(True)
 
     @pyqtSlot()
-    def on_qAction2_triggered(self):    # 另存文件
+    def on_qAction2_triggered(self):  # 另存文件
         curPath = os.getcwd()
         filename, flt = QFileDialog.getSaveFileName(self, "保存文件", curPath, "井斜数据文件(*.txt);;所有文件(*.*)")
-        if(filename==""):
+        if (filename == ""):
             return
         self.on_qAction3_triggered()
         aFile = open(filename, "w")
@@ -228,9 +230,9 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         aFile.close()
 
     @pyqtSlot()
-    def on_qAction4_triggered(self):    # 添加行
+    def on_qAction4_triggered(self):  # 添加行
         itemList = []
-        for i in range(self.__ColCount-1):
+        for i in range(self.__ColCount - 1):
             item = QStandardItem("0")
             itemList.append(item)
 
@@ -240,14 +242,14 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         itemList.append(item)
 
         self.itemModel.appendRow(itemList)
-        curIndex = self.itemModel.index(self.itemModel.rowCount()-1, 0)
+        curIndex = self.itemModel.index(self.itemModel.rowCount() - 1, 0)
         self.selectionModel.clearSelection()
         self.selectionModel.setCurrentIndex(curIndex, QItemSelectionModel.Select)
 
     @pyqtSlot()
-    def on_qAction5_triggered(self):    # 插入行
+    def on_qAction5_triggered(self):  # 插入行
         itemlist = []
-        for i in range(self.__ColCount-1):
+        for i in range(self.__ColCount - 1):
             item = QStandardItem("0")
             itemlist.append(item)
 
@@ -263,24 +265,24 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         self.selectionModel.setCurrentIndex(curIndex, QItemSelectionModel.Select)
 
     @pyqtSlot()
-    def on_qAction6_triggered(self):    # 删除行
+    def on_qAction6_triggered(self):  # 删除行
         curIndex = self.selectionModel.currentIndex()
         self.itemModel.removeRow(curIndex.row())
 
     @pyqtSlot()
-    def on_qAction7_triggered(self):    # 居左
+    def on_qAction7_triggered(self):  # 居左
         self.__setCellAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
     @pyqtSlot()
-    def on_qAction8_triggered(self):    # 居中
+    def on_qAction8_triggered(self):  # 居中
         self.__setCellAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
     @pyqtSlot()
-    def on_qAction9_triggered(self):    # 居右
+    def on_qAction9_triggered(self):  # 居右
         self.__setCellAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
     @pyqtSlot(bool)
-    def on_qAction10_triggered(self, checked):   # 粗体
+    def on_qAction10_triggered(self, checked):  # 粗体
         if (not self.selectionModel.hasSelection()):
             return
         selectedIndex = self.selectionModel.selectedIndexes()
@@ -293,36 +295,93 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             item.setFont(font)
 
     @pyqtSlot()
-    def on_qAction3_triggered(self):    # 模型数据
+    def on_qAction3_triggered(self):  # 模型数据
         self.ui.qPlainTextEdit.clear()
         lineStr = ""
-        for i in range(self.itemModel.columnCount()-1):
+        for i in range(self.itemModel.columnCount() - 1):
             item = self.itemModel.horizontalHeaderItem(i)
-            lineStr = lineStr+item.text()+"\t"
-        item = self.itemModel.horizontalHeaderItem(self.__ColCount-1)
-        lineStr=lineStr+item.text()
+            lineStr = lineStr + item.text() + "\t"
+        item = self.itemModel.horizontalHeaderItem(self.__ColCount - 1)
+        lineStr = lineStr + item.text()
         self.ui.qPlainTextEdit.appendPlainText(lineStr)
 
         for i in range(self.itemModel.rowCount()):
             lineStr = ""
-            for j in range(self.itemModel.columnCount()-1):
-                item = self.itemModel.item(i,j)
-                lineStr=lineStr+item.text()+"\t"
-            item=self.itemModel.item(i,self.__ColCount-1)
-            if(item.checkState()==Qt.Checked):
-                lineStr = lineStr+"1"
+            for j in range(self.itemModel.columnCount() - 1):
+                item = self.itemModel.item(i, j)
+                lineStr = lineStr + item.text() + "\t"
+            item = self.itemModel.item(i, self.__ColCount - 1)
+            if (item.checkState() == Qt.Checked):
+                lineStr = lineStr + "1"
             else:
-                lineStr = lineStr+"0"
+                lineStr = lineStr + "0"
             self.ui.qPlainTextEdit.appendPlainText(lineStr)
 
     def do_curChanged(self, current, previous):
-        if (current!=None):
-            text = "当前单元格：%d行，%d列" %(current.row(), current.column())
+        if (current != None):
+            text = "当前单元格：%d行，%d列" % (current.row(), current.column())
             self.qLabel1.setText(text)
             item = self.itemModel.itemFromIndex(current)
-            self.qLabel2.setText("单元格内容："+item.text())
+            self.qLabel2.setText("单元格内容：" + item.text())
             font = item.font()
             self.ui.qAction10.setChecked(font.bold())
+
+
+class QmyFloatSpinDelegate(QStyledItemDelegate):
+    def __init__(self, minV=0, maxV=1000, digi=2, parent=None):
+        super().__init__(parent)
+        self.__min = minV
+        self.__max = maxV
+        self.__decimals = digi
+
+    def createEditor(self, parent, option, index):
+        editor = QDoubleSpinBox(parent)
+        editor.setFrame(False)
+        editor.setRange(self.__min, self.__max)
+        editor.setDecimals(self.__decimals)
+        return editor
+
+    def setEditorData(self, editor, index):
+        model = index.model()
+        text = model.data(index, Qt.EditRole)
+        editor.setValue(float(text))
+
+    def setModelData(self, editor, model, index):
+        value = editor.value()
+        model.setData(index, value, Qt.EditRole)
+
+    def updateEditorGeometry(self, editor, option, index):
+        editor.setGeometry(option.rect)
+
+
+class QmyComboBoxDelegate(QStyledItemDelegate):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.__itemList = []
+        self.__isEditable = False
+
+    def setItems(self, itemList, isEditable=False):
+        self.__itemList = itemList
+        self.__isEditable = isEditable
+
+    def createEditor(self, parent, option, index):
+        editor = QComboBox(parent)
+        editor.setFrame = False
+        editor.setEditable(self.__isEditable)
+        editor.addItems(self.__itemList)
+        return editor
+
+    def setEditorData(self, editor, index):
+        model = index.model()
+        text = model.data(index, Qt.EditRole)
+        editor.setCurrentText(text)
+
+    def setModelData(self, editor, model, index):
+        text = editor.currentText()
+        model.setData(index, text, Qt.EditRole)
+
+    def updateEditorGeometry(self, editor, option, index):
+        editor.setGeometry(option.rect)
 
 
 if __name__ == '__main__':
