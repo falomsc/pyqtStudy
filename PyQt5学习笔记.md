@@ -39,7 +39,7 @@
 5. 将ui文件编译为py文件
 
    ```shell
-    |
+    pyuic5 -o ui_Dialog.py Dialog.ui
    ```
 
    
