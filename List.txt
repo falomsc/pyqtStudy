@@ -1,0 +1,62 @@
+QObject(?)
+|--QWidget
+|   |--QFrame(?)
+|   |   |--QLabel(√)
+|   |   |--QLCDNumber(√)
+|   |   |--QToolBox(√)
+|   |   |--QAbstractScrollArea
+|   |       |--QPlainTextEdit
+|   |       |--QScrollArea
+|   |       |--QAbstractItemView
+|   |           |--QListView
+|   |           |   |--QListWidget
+|   |           |       |==QListWidgetItem
+|   |           |--QTreeView
+|   |           |   |--QTreeWidget
+|   |           |       |==QTreeWidgetItem
+|   |           |--QTableView
+|   |           |   |--QTableWidget
+|   |           |       |==QTableWidgetItem
+|   |           |--QHeaderView
+|   |--QAbstractButton(√)
+|   |   |--QCheckBox(√)
+|   |   |--QPushButton(√)
+|   |   |--QRadioButton
+|   |   |--QToolButton(√)
+|   |--QAbstractSlider(√)
+|   |   |--QScrollBar
+|   |   |--QSlider(√)
+|   |--QAbstractSpinBox(√)
+|   |   |--QSpinBox(√)
+|   |   |--QDoubleSpinBox(√)
+|   |   |--QDateTimeEdit(?)
+|   |       |--QDateEdit
+|   |       |--QTimeEdit
+|   |--QDialog
+|   |   |--QFileDialog
+|   |   |--QMessageBox
+|   |--QCalendarWidget(√)
+|   |--QLineEdit(√)
+|   |--QProgressBar(√)
+|   |--QMainWindow(√)
+|   |--QMenuBar(√)
+|   |--QMenu(?)
+|   |--QToolBar(√)
+|   |--QStatusBar(√)
+|   |--QComboBox(√)
+|   |   |--QFontComboBox
+|   |--QTabWidget(√)
+|   |--QDockWidget
+|--QAction(√)
+|--QActionGroup(√)
+|--QAbstractItemModel
+|   |--QAbstractTableModel
+|   |--QStandardItemModel
+|   |   |--QStandardItem
+|   |--QAbstractListModel
+|   |   |--QStringListModel
+|   |--QFileSystemModel
+|--QItemSelectionModel
+|--QAbstractItemDelegate
+    |--QItemDelegate
+    |--QStyledItemDelegate
