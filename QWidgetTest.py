@@ -1,24 +1,21 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QTime, QRect
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QDateTimeEdit, QToolButton
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QDateTimeEdit, QToolButton, QAbstractScrollArea
 
 
 class Ui_MainWindow(object):
     def setupUi(self, qWidget):
         qWidget.resize(805, 512)
-        self.qToolButton = QtWidgets.QToolButton(qWidget)
-        self.qToolButton.setGeometry(QRect(100, 100, 100, 100))
-        self.qToolButton.setText("caidan")
-        self.qAction = QtWidgets.QAction(qWidget)
-        self.qAction.setText("haha")
-        self.qAction.setIcon(QIcon("./image/15.ico"))
+        self.qVBoxLayout = QtWidgets.QVBoxLayout(qWidget)
+        self.qScrollArea = QtWidgets.QScrollArea(qWidget)
+        self.qScrollArea.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.qLabel = QtWidgets.QLabel(self.qScrollArea)
+        self.qLabel.setPixmap(QPixmap("./image/scenery.jpg"))
+        self.qScrollArea.setWidget(self.qLabel)
+        self.qVBoxLayout.addWidget(self.qScrollArea)
 
-        self.qMenu = QtWidgets.QMenu(qWidget)
-        self.qMenu.addAction(self.qAction)
-        self.qToolButton.setMenu(self.qMenu)
-        self.qToolButton.setPopupMode(QToolButton.MenuButtonPopup)
 
 
 

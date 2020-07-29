@@ -134,3 +134,11 @@
    pyrcc5 .\QtApp\res.qrc -o res_rc.py
    ```
 
+
+
+#### 二，基本部件使用
+
+1. QListWidget
+2. 123
+3. QTreeWidget
+4. QTableWidget

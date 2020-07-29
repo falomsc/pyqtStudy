@@ -4,7 +4,7 @@ QObject(?)
 |   |   |--QLabel(√)
 |   |   |--QLCDNumber(√)
 |   |   |--QToolBox(√)
-|   |   |--QAbstractScrollArea
+|   |   |--QAbstractScrollArea(?)
 |   |       |--QPlainTextEdit
 |   |       |--QScrollArea
 |   |       |--QAbstractItemView
