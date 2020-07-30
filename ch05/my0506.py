@@ -163,87 +163,94 @@ class QmyWidget(QtWidgets.QWidget):
         self.ui.qTableWidget.setDefaultDropAction(Qt.MoveAction)
 
         self.__itemView = None
+        self.on_qRadioButton1_clicked()
 
-    # def __refreshToUI(self):
-    #     self.ui.qCheckBox1.setChecked(self.__itemView.acceptDrops())
-    #     self.ui.qCheckBox2.setChecked(self.__itemView.dragEnabled())
-    #     self.ui.qComboBox1.setCurrentIndex(self.__itemView.dragDropMode())
-    #     index = self.__getDropActionIndex(self.__itemView.defaultDropAction())
-    #     self.ui.qComboBox2.setCurrentIndex(index)
     def __refreshToUI(self):
         self.ui.qCheckBox1.setChecked(self.__itemView.acceptDrops())
         self.ui.qCheckBox2.setChecked(self.__itemView.dragEnabled())
-        # self.ui.qComboBox1.setCurrentIndex(self.__itemView.dragDropMode())
-        # index = self.__getDropActionIndex(self.__itemView.defaultDropAction())
-        # self.ui.qComboBox2.setCurrentIndex(index)
+        self.ui.qComboBox1.setCurrentIndex(self.__itemView.dragDropMode())
+        index = self.__getDropActionIndex(self.__itemView.defaultDropAction())
+        self.ui.qComboBox2.setCurrentIndex(index)
 
-    # def __getDropActionType(self, index):
-    #     if index == 0:
-    #         return Qt.CopyAction
-    #     elif index == 1:
-    #         return Qt.MoveAction
-    #     elif index == 2:
-    #         return Qt.LinkAction
-    #     elif index == 3:
-    #         return Qt.IgnoreAction
-    #     else:
-    #         return Qt.CopyAction
+    def __getDropActionIndex(self, actionType):
+        if actionType == Qt.CopyAction:
+            return 0
+        elif actionType == Qt.MoveAction:
+            return 1
+        elif actionType == Qt.LinkAction:
+            return 2
+        elif actionType == Qt.IgnoreAction:
+            return 3
+        else:
+            return 0
 
-    # def eventFilter(self, watched, event):
-    #     if(event.type()==QEvent.KeyPress) and (event.key()==Qt.Key_Delete):
-    #         if(watched == self.ui.qListWidget1):
-    #             self.ui.qListWidget1.takeItem(self.ui.qListWidget1.currentRow())
-    #         elif(watched == self.ui.qListWidget2):
-    #             self.ui.qListWidget2.takeItem(self.ui.qListWidget2.currentRow())
-    #         elif(watched==self.ui.qTreeWidget):
-    #             curItem = self.ui.qTreeWidget.currentItem()
-    #             if(curItem.parent()!=None):
-    #                 parItem = curItem.parent()
-    #                 parItem.removeChild(curItem)
-    #             else:
-    #                 index = self.ui.qTreeWidget.indexOfTopLevelItem(curItem)
-    #                 self.ui.qTreeWidget.takeTopLevelItem(index)
-    #         elif(watched == self.ui.qTableWidget):
-    #             self.ui.qTableWidget.takeItem(self.ui.qTableWidget.currentRow(),self.ui.qTableWidget.currentColumn())
-    #     return super().eventFilter(watched, event)
+    def __getDropActionType(self, index):
+        if index == 0:
+            return Qt.CopyAction
+        elif index == 1:
+            return Qt.MoveAction
+        elif index == 2:
+            return Qt.LinkAction
+        elif index == 3:
+            return Qt.IgnoreAction
+        else:
+            return Qt.CopyAction
+
+    def eventFilter(self, watched, event):
+        if(event.type()==QEvent.KeyPress) and (event.key()==Qt.Key_Delete):
+            if(watched == self.ui.qListWidget1):
+                self.ui.qListWidget1.takeItem(self.ui.qListWidget1.currentRow())
+            elif(watched == self.ui.qListWidget2):
+                self.ui.qListWidget2.takeItem(self.ui.qListWidget2.currentRow())
+            elif(watched==self.ui.qTreeWidget):
+                curItem = self.ui.qTreeWidget.currentItem()
+                if(curItem.parent()!=None):
+                    parItem = curItem.parent()
+                    parItem.removeChild(curItem)
+                else:
+                    index = self.ui.qTreeWidget.indexOfTopLevelItem(curItem)
+                    self.ui.qTreeWidget.takeTopLevelItem(index)
+            elif(watched == self.ui.qTableWidget):
+                self.ui.qTableWidget.takeItem(self.ui.qTableWidget.currentRow(),self.ui.qTableWidget.currentColumn())
+        return super().eventFilter(watched, event)
 
     @pyqtSlot()
     def on_qRadioButton1_clicked(self):
         self.__itemView = self.ui.qListWidget1
         self.__refreshToUI()
 
-    # @pyqtSlot()
-    # def on_qRadioButton2_clicked(self):
-    #     self.__itemView = self.ui.qListWidget2
-    #     self.__refreshToUI()
-    #
-    # @pyqtSlot()
-    # def on_qRadioButton3_clicked(self):
-    #     self.__itemView = self.ui.qTreeWidget
-    #     self.__refreshToUI()
-    #
-    # @pyqtSlot()
-    # def on_qRadioButton4_clicked(self):
-    #     self.__itemView = self.ui.qTableWidget
-    #     self.__refreshToUI()
-    #
-    # @pyqtSlot(bool)
-    # def on_qCheckBox1_clicked(self, checked):
-    #     self.__itemView.setAcceptDrops(checked)
-    #
-    # @pyqtSlot(bool)
-    # def on_qCheckBox2_clicked(self, checked):
-    #     self.__itemView.setDragEnabled(checked)
-    #
-    # @pyqtSlot(int)
-    # def on_qComboBox1_currentIndexChanged(self, index):
-    #     mode = (QAbstractItemView.DragDropMode)(index)
-    #     self.__itemView.setDragDropMode(mode)
-    #
-    # @pyqtSlot(int)
-    # def on_qComboBox2_currentIndexChanged(self, index):
-    #     actionType = self.__getDropActionType(index)
-    #     self.__itemView.setDefaultDropAction(actionType)
+    @pyqtSlot()
+    def on_qRadioButton2_clicked(self):
+        self.__itemView = self.ui.qListWidget2
+        self.__refreshToUI()
+
+    @pyqtSlot()
+    def on_qRadioButton3_clicked(self):
+        self.__itemView = self.ui.qTreeWidget
+        self.__refreshToUI()
+
+    @pyqtSlot()
+    def on_qRadioButton4_clicked(self):
+        self.__itemView = self.ui.qTableWidget
+        self.__refreshToUI()
+
+    @pyqtSlot(bool)
+    def on_qCheckBox1_clicked(self, checked):
+        self.__itemView.setAcceptDrops(checked)
+
+    @pyqtSlot(bool)
+    def on_qCheckBox2_clicked(self, checked):
+        self.__itemView.setDragEnabled(checked)
+
+    @pyqtSlot(int)
+    def on_qComboBox1_currentIndexChanged(self, index):
+        mode = (QAbstractItemView.DragDropMode)(index)
+        self.__itemView.setDragDropMode(mode)
+
+    @pyqtSlot(int)
+    def on_qComboBox2_currentIndexChanged(self, index):
+        actionType = self.__getDropActionType(index)
+        self.__itemView.setDefaultDropAction(actionType)
 
 
 if __name__ == '__main__':
