@@ -122,7 +122,7 @@ class Ui_Dialog():
 
 
 class QmyDialog(QtWidgets.QDialog):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
@@ -192,14 +192,14 @@ class QmyDialog(QtWidgets.QDialog):
         dlgProgress.setAutoReset(True)
         dlgProgress.setAutoClose(True)
 
-        msCounter  = QTime()
-        for i in range(minV,maxV+1):
+        msCounter = QTime()
+        for i in range(minV, maxV + 1):
             dlgProgress.setValue(i)
             dlgProgress.setLabelText("正在复制文件，第 %d 个" % i)
             msCounter.start()
-            while(msCounter.elapsed()<30):
+            while (msCounter.elapsed() < 30):
                 None
-            if(dlgProgress.wasCanceled()):
+            if (dlgProgress.wasCanceled()):
                 break
 
     def do_progress_cancled(self):
@@ -210,7 +210,8 @@ class QmyDialog(QtWidgets.QDialog):
         dlgTitle = "Question消息框"
         strInfo = "文件已被修改，是否保存修改？"
         defaultBtn = QMessageBox.NoButton
-        result = QMessageBox.question(self, dlgTitle, strInfo, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, defaultBtn)
+        result = QMessageBox.question(self, dlgTitle, strInfo, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel,
+                                      defaultBtn)
         if result == QMessageBox.Yes:
             self.ui.qPlainTextEdit.appendPlainText("Question消息框：Yes 被选择")
         elif result == QMessageBox.No:
@@ -257,7 +258,7 @@ class QmyDialog(QtWidgets.QDialog):
         echoMode = QLineEdit.Normal
 
         text, OK = QInputDialog.getText(self, dlgTitle, txtLabel, echoMode, defaultInput)
-        if(OK):
+        if (OK):
             self.ui.qPlainTextEdit.appendPlainText(text)
 
     @pyqtSlot()
@@ -293,15 +294,10 @@ class QmyDialog(QtWidgets.QDialog):
         txtLabel = "请选择级别"
         curIndex = 0
         editable = True
-        items = ["优秀","良好","合格","不合格"]
+        items = ["优秀", "良好", "合格", "不合格"]
         text, OK = QInputDialog.getItem(self, dlgTitle, txtLabel, items, curIndex, editable)
         if OK:
             self.ui.qPlainTextEdit.appendPlainText(text)
-
-
-
-
-
 
 
 if __name__ == '__main__':
