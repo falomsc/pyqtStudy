@@ -1,4 +1,4 @@
-#### 一，PyQt5 GUI程序框架
+#### 一，开发环境安装
 
 1. 什么是Python Qt？
 
@@ -14,9 +14,11 @@
    pip install PyQt5
    ```
 
-   
 
-3. PyQt5 GUI程序的基本框架
+
+#### 二，PyQt5 GUI程序框架
+
+1. PyQt5 GUI程序的基本框架
 
    ```python
    import sys
@@ -34,9 +36,9 @@
 
    
 
-4. 用UI Designer可视化设计窗体
+2. 用UI Designer可视化设计窗体
 
-5. 将ui文件编译为py文件
+3. 将ui文件编译为py文件
 
    ```shell
     pyuic5 -o ui_Dialog.py Dialog.ui
@@ -44,7 +46,7 @@
 
    
 
-6. 界面与逻辑分离的GUI程序框架
+4. 界面与逻辑分离的GUI程序框架
 
    ```python
    import sys
@@ -65,7 +67,7 @@
 
    
 
-7. 为组建的内建信号编写槽函数
+5. 为组建的内建信号编写槽函数
 
    setupUi()函数最后一行定义了信号自动关槽函数的规则
 
@@ -92,7 +94,7 @@
 
    
 
-8. 自定义信号
+6. 自定义信号
 
    要自定义信号，类必须是QObject的子类
 
@@ -121,10 +123,10 @@
    boy.ageChanged[str].connect(resp.do_ageChanged_str)
    boy.setAge(10)
    ```
-   
 
    
-9. 资源文件的使用
+
+7. 资源文件的使用
 
    Qt Creator里新建Qt Resource File
 
@@ -136,9 +138,44 @@
 
 
 
-#### 二，基本部件使用
+#### 三，常用界面组件的使用
 
-1. QListWidget
-2. 123
-3. QTreeWidget
-4. QTableWidget
+1. LineEdit
+
+   ![image-20200801220308740](Python Qt GUI与数据可视化编程.assets/image-20200801220308740.png)
+
+2. ButtonCheck
+
+   ![image-20200801224551477](Python Qt GUI与数据可视化编程.assets/image-20200801224551477.png)
+
+3. ProgressBar
+
+   <span style='color:red'>垂直ProgressBar的显示问题</span>
+
+   ![image-20200801230723976](Python Qt GUI与数据可视化编程.assets/image-20200801230723976.png)
+
+4. DateTime
+
+   <span style='color:red'>currentSection</span>
+
+   ![image-20200801232620306](Python Qt GUI与数据可视化编程.assets/image-20200801232620306.png)
+
+5. Timer
+
+   ![image-20200801233914828](Python Qt GUI与数据可视化编程.assets/image-20200801233914828.png)
+
+6. ComboBox
+
+   <span style='color:red'>addPixmap</span>
+
+   注意myWidget.py 49行增加关联数据
+
+   ![image-20200802001136630](Python Qt GUI与数据可视化编程.assets/image-20200802001136630.png)
+
+7. 123
+
+8. 123
+
+9. 123
+
+10. 123
