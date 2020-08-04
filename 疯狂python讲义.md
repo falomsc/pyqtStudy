@@ -1321,6 +1321,8 @@
 
 2. 13123
 
+   
+
 #### 第九章，模块和包
 
 1. 模块化编程
@@ -1409,7 +1411,193 @@
    ```python
    >>>String.__file__
    ```
+   
+
+
 
 #### 第十章，常见模块
 
-1. we
+1. sys
+
+2. os
+
+3. random
+
+   ```python
+   random.randint(a, b)
+   random.choice(seq)
+   random.choices(seq, weights = None, *, cum_weights = None, k = 1)	# random.choices(['Python', 'Swift', 'Kotlin'], [5, 5, 1], k = 6)
+   random.shuffle(x[, random])
+   random.sample(population, k)
+   random.random()
+   random.uniform(a, b)
+   ```
+
+4. time
+
+   time.struct_time类代表一个时间对象，包含9个属性tm_year, tm_mon, tm_mday, tm_hour, tm_min, tm_sec, tm_wday, tm_yday(一年内第几天), tm_isdst(夏令时)
+
+   ```python
+   time.asctime([t])
+   
+   ```
+
+   
+
+5. JSON支持
+
+   JSON的全称是JavaScript Object Notation，即JavaScript对象符号
+
+   使用JSON语法创建JavaScript对象
+
+   ```javascript
+   person = 
+   {
+   	name : 'yeeku',
+       gender : 'male',
+       son : {
+           name : 'tiger',
+           grade : 1
+       }
+       info : function()
+       {
+           console.log("姓名：" + this.name + "性别：" + this.sex);
+       }
+   }
+   ```
+
+   使用JSON语法创建数组
+
+   ```javascript
+   var a = ['yeeku', 'nono'];
+   ```
+
+   Python的JSON支持
+
+   ```mermaid
+   graph LR
+   	A[JSON字符串] -->|decode用load或loads| B[Python对象]
+   	B -->|encode用dump或dumps| A
+   ```
+
+   
+
+   ```python
+   import json
+   s = json.dumps(['yeeku', {'favorite': ('coding', None, 'game', 25)}])
+   s2 = json.dumps("\"foo\bar")
+   s3 = json.dumps('\\')
+   s4 = json.dumps({"c": 0, "b": 0, "a": 0}, sort_keys = True)
+   s5 = json.dumps([1, 2, 3, {'x': 5, 'y': 7}], separators = (',', ':'))
+   s6 = json.dumps({'Python': 5, 'Kotlin': 7}, sort_keys = True, indent = 4)	# indent是缩进并且换行
+   s7 = json.JSONEncoder().encode({"names": ("孙悟空", "齐天大圣")})
+   f = open('a.json', 'w')
+   json.dump(['Kotlin', {'Python': 'excellent'}], f)
+   ```
+
+   ```python
+   import json
+   result1 = json.loads('["yeeku", {"favorite": ["coding", null, "games", 25]]')
+   result2 = json.loads('"\\"foo\\"bar"')
+   def as_complex(dct):
+       if '__complex__' in dct:
+           return complex(dct['real'], dec['imag'])
+       return dct
+   result3 = json.loads('("__complex__": True, "real": 1, "imag": 2)', object_hook = as_complex)
+   f = open('a.json')
+   result4 = json.load(f)
+   ```
+
+   ```python
+   import json
+   class ComplexEncoder(json.JSONEncoder):
+       def default(self, obj):
+           if isinstance(obj ,complex):
+               return {"__complex__": 'ture', "real": obj.real, 'imag': obj.imag}
+           return json.JSONEncoder.default(self, obj)
+   s1 = json.dumps(2 + 1j, cls=ComplexEncoder)
+   s2 = ComplexEncoder().encode(2 + 1j)
+   ```
+
+   
+
+6. 正则表达式
+
+   re.compile预编译正则表达式，也可以不预编译
+
+   match()必须从字符串开始处匹配，search()不须要
+
+   ```python
+   import re
+   m1 = re.match('www', 'www.fkit.org')
+   m2 = re.search('www', 'www.fkit.com')
+   m3 = re.search('fkit', 'www.fkit.com')
+   print(m1.span())
+   print(m1.group())
+   print(m2.span())
+   print(m2.group())
+   print(m3.span())
+   print(m3.group())
+   print(re.match('fkit', 'www.fkit.com'))
+   ```
+
+   findall()返回列表，finditer()返回迭代器
+
+   ```python
+   import re
+   print(re.findall('fkit', 'FkIt is very good, Fkit.org is my favourite', re.I))	# re.I式匹配对大小写不敏感
+   it = re.finditer('fkit', 'FkIt is very good, Fkit.org is my favourite', re.I)
+   for e in it:
+       print(str(e.span()) + "-->" + e.group())
+   ```
+
+   fullmatch要求整个字符串能匹配pattern，sub用于将所有匹配pattern的内容替换
+
+   ```python
+   import re
+   my_date = '2008-08-18'
+   print(re.sub(r'-', '/', my_date))	# r代表原始字符串
+   print(re.sub(r'-', '/', my_date, 1))
+   ```
+
+   ```python
+   import re
+   def fun(matched):
+       value = "《疯狂" + (matched.group('lang')) + "讲义》"
+       return value
+   s = 'Python很好，Kotlin也很好'
+   print(re.sub(r'(?P<lang>\w+)', fun, s, flags = re.A))	# ?P<lang>为该组起名为lang，re.A表示\w只能代表ASCII字符，不能代表汉字
+   ```
+
+   re.split使用pattern对string进行分割
+
+   ```python
+   import re
+   print(re.split(',', 'fkit, fkjava, crazyit'))
+   print(re.split(',', 'fkit, fkjava, crazyit', 1))
+   print(re.split('a', 'fkit, fkjava, crazyit'))
+   print(re.split('x', 'fkit, fkjava, crazyit'))
+   ```
+
+   re.escape对模式中除ASCII字符、数值、下划线之外的其他字符进行转义
+
+   ```python
+   import re
+   print(re.escape(r'www.crazyit.org is good, i love it!'))
+   print(re.escape(r'A-Zand0-9?'))
+   ```
+   
+   正则表达式对象是调用re.compile函数的返回值，Match对象是match和search方法的返回值
+   
+
+   ```python
+   import re
+   pa = re.compile('fkit')
+   print(pa.match('www.fkit.org', 4).span())
+   print(pa.match('www.fkit.org', 4, 6))
+   print(pa.match('www.fkit.org', 4, 8).span())
+   ```
+
+   
+
+7. 123
