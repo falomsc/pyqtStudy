@@ -172,7 +172,17 @@
 
    ![image-20200802001136630](Python Qt GUI与数据可视化编程.assets/image-20200802001136630.png)
 
-7. 123
+7. Actions
+
+   <span style='color:red'>customContextMenuRequested信号，setFontPointSize的参数类型qreal</span>
+
+   （1）设置字体注意mergeCurrentCharFormat
+
+   （2）QPlainTextEdit的信号copyAvailable，触发时将cut和copy按钮enabled状态设置为信号，paste按钮enabled状态设置为canPaste()
+
+   （3）QPlainTextEdit的信号selectionChanged，触发时将粗体斜体下划线按钮checked设置为currentCharFormat的状态
+
+   
 
 8. 123
 
