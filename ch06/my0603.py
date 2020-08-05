@@ -277,7 +277,7 @@ class QmyMainWindow(QMainWindow):
     def on_qAction3_triggered(self):    # 嵌入式MainWindow
         formTable = QmyFormTable(self)
         formTable.setAttribute(Qt.WA_DeleteOnClose)
-        title = "Table %d" %self.ui.qTabWidget.conut()
+        title = "Table %d" %self.ui.qTabWidget.count()
         curIndex = self.ui.qTabWidget.addTab(formTable, title)
         self.ui.qTabWidget.setCurrentIndex(curIndex)
         self.ui.qTabWidget.setVisible(True)
@@ -293,7 +293,7 @@ class QmyMainWindow(QMainWindow):
         hasTabs = self.ui.qTabWidget.count()>0
         self.ui.qTabWidget.setVisible(hasTabs)
 
-    def on_qTabWidget_tabCloseReuqest(self, index):
+    def on_qTabWidget_tabCloseRequested(self, index):
         if(index<0):
             return
         aForm = self.ui.qTabWidget.widget(index)
