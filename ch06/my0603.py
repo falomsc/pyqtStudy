@@ -43,6 +43,7 @@ class Ui_MainWindow():
         self.qAction3.setObjectName("qAction3")
         self.qAction4.setObjectName("qAction4")
         self.qAction5.setObjectName("qAction5")
+        self.qTabWidget.setObjectName("qTabWidget")
         self.qAction5.triggered.connect(qMainWindow.close)
         QtCore.QMetaObject.connectSlotsByName(qMainWindow)
 
@@ -247,6 +248,56 @@ class QmyMainWindow(QMainWindow):
         painter = QPainter(self)
         painter.drawPixmap(0, self.ui.qToolBar.height(), self.width(), self.height()-self.ui.qToolBar.height()-self.ui.qStatusBar.height(), self.__pic)
         super().paintEvent(event)
+
+    @pyqtSlot()
+    def on_qAction1_triggered(self):    # 嵌入式Widget
+        formDoc = QmyFormDoc(self)
+        formDoc.setAttribute(Qt.WA_DeleteOnClose)
+        formDoc.docFileChanged.connect(self.do_docFileChanged)
+        title = "Doc %d" %self.ui.qTabWidget.count()
+        curIndex = self.ui.qTabWidget.addTab(formDoc, title)
+        self.ui.qTabWidget.setCurrentIndex(curIndex)
+        self.ui.qTabWidget.setVisible(True)
+
+    @pyqtSlot(str)
+    def do_docFileChanged(self, shortFilename):
+        index = self.ui.qTabWidget.currentIndex()
+        self.ui.qTabWidget.setTabText(index, shortFilename)
+
+    @pyqtSlot()
+    def on_qAction2_triggered(self):    # 独立Widget窗口
+        formDoc = QmyFormDoc(self)
+        formDoc.setAttribute(Qt.WA_DeleteOnClose)
+        formDoc.setWindowTitle("基于QWidget的窗口，关闭时删除了")
+        formDoc.setWindowFlag(Qt.Window, True)
+        formDoc.setWindowOpacity(0.9)
+        formDoc.show()
+
+    @pyqtSlot()
+    def on_qAction3_triggered(self):    # 嵌入式MainWindow
+        formTable = QmyFormTable(self)
+        formTable.setAttribute(Qt.WA_DeleteOnClose)
+        title = "Table %d" %self.ui.qTabWidget.conut()
+        curIndex = self.ui.qTabWidget.addTab(formTable, title)
+        self.ui.qTabWidget.setCurrentIndex(curIndex)
+        self.ui.qTabWidget.setVisible(True)
+
+    @pyqtSlot()
+    def on_qAction4_triggered(self):    # 独立MainWindow窗口
+        formTable = QmyFormTable(self)
+        formTable.setAttribute(Qt.WA_DeleteOnClose)
+        formTable.setWindowTitle("基于QMainWindow的窗口，关闭时删除")
+        formTable.show()
+
+    def on_qTabWidget_currentChanged(self, index):
+        hasTabs = self.ui.qTabWidget.count()>0
+        self.ui.qTabWidget.setVisible(hasTabs)
+
+    def on_qTabWidget_tabCloseReuqest(self, index):
+        if(index<0):
+            return
+        aForm = self.ui.qTabWidget.widget(index)
+        aForm.close()
 
 class QmyDialogHeaders(QDialog):
     def __init__(self, parent=None):
