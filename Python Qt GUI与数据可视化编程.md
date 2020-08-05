@@ -184,8 +184,19 @@
 
    
 
-8. 123
+8. ListWidget
 
-9. 123
+   （1）注意setFlags，给每个QListWidgetItem设置
+
+   （2）右键菜单，触发customContextMenuRequested信号，然后qMenu.exec(QCursor.pos())
+
+9. TreeDock
+
+   ```mermaid
+   graph LR
+       qTreeView --> |"header()"| qHeaderList
+   ```
+
+   
 
 10. 123
