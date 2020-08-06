@@ -68,6 +68,7 @@ class Ui_MainWindow():
 class Ui_QWFormDoc():
     def setupUi(self, QWFormDoc):
         QWFormDoc.resize(666, 401)
+        QWFormDoc.setWindowTitle("new document")
         self.qVBoxLayout = QtWidgets.QVBoxLayout(QWFormDoc)
         self.qPlainTextEdit = QtWidgets.QPlainTextEdit(QWFormDoc)
         self.qPlainTextEdit.setObjectName("qPlainTextEdit")

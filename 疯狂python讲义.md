@@ -1476,8 +1476,8 @@
 
    ```mermaid
    graph LR
-   	A[JSON字符串] -->|decode用load或loads| B[Python对象]
-   	B -->|encode用dump或dumps| A
+   	A[JSON字符串] -->|"decode(用load或loads)"| B[Python对象]
+   	B -->|"encode(用dump或dumps)"| A
    ```
 
    
@@ -1551,7 +1551,7 @@
        print(str(e.span()) + "-->" + e.group())
    ```
 
-   fullmatch要求整个字符串能匹配pattern，sub用于将所有匹配pattern的内容替换
+   fullmatch()要求整个字符串能匹配pattern，sub()用于将所有匹配pattern的内容替换
 
    ```python
    import re
@@ -1569,7 +1569,7 @@
    print(re.sub(r'(?P<lang>\w+)', fun, s, flags = re.A))	# ?P<lang>为该组起名为lang，re.A表示\w只能代表ASCII字符，不能代表汉字
    ```
 
-   re.split使用pattern对string进行分割
+   re.split()使用pattern对string进行分割
 
    ```python
    import re
@@ -1579,16 +1579,16 @@
    print(re.split('x', 'fkit, fkjava, crazyit'))
    ```
 
-   re.escape对模式中除ASCII字符、数值、下划线之外的其他字符进行转义
+   re.escape()对模式中除ASCII字符、数值、下划线之外的其他字符进行转义
 
    ```python
    import re
    print(re.escape(r'www.crazyit.org is good, i love it!'))
    print(re.escape(r'A-Zand0-9?'))
    ```
-   
-   正则表达式对象是调用re.compile函数的返回值，Match对象是match和search方法的返回值
-   
+
+   正则表达式对象是调用re.compile函数的返回值，Match对象是match()和search()方法的返回值
+
 
    ```python
    import re
@@ -1598,6 +1598,195 @@
    print(pa.match('www.fkit.org', 4, 8).span())
    ```
 
+   ```python
+   import re
+   m = re.search(r'(fkit).(org)', r"www.fkit.org is a good domain")
+   print(m.group(0))	# 0是整个正则表达式
+   print(m[0])
+   print(m.span(0))
+   print(m.group(1))
+   print(m[1])
+   print(m.span(1))
+   print(m.group(2))
+   print(m[2])
+   print(m.span(2))
+   print(m.groups())
+   m2 = re.search(r'(?P<prefix>fkit).(?P<suffix>org)', r"www.fkit.org is a good domain")	# 为正则表达式的组指定名字
+   print(m2.groupdict())
+   ```
+
+| 特殊字符 |                        说明                        |
+| :------: | :------------------------------------------------: |
+|    $     |                   匹配一行的结尾                   |
+|    ^     |                   匹配一行的开头                   |
+|    *     |             前面子表达式出现零次或多次             |
+|    +     |             前面子表达式出现一次或多次             |
+|    ?     |             前面子表达式出现零次或一次             |
+|    .     | 匹配除\n外任意单个字符，使用re.S后还可以匹配换行符 |
+|    \|    |                指定两项之间任选一项                |
+
+| 预定义字符 |                            说明                            |
+| :--------: | :--------------------------------------------------------: |
+|     \d     |                        匹配0~9数字                         |
+|     \D     |                         匹配非数字                         |
+|     \s     | 匹配所有空白字符，包括空格、制表符、回车符、换页符、换行符 |
+|     \S     |                      匹配所有非空白符                      |
+|     \w     |  匹配所有单词字符，包括0~9所有数字、26个英文字母和下划线   |
+|     \W     |                     匹配所有非单词字符                     |
+
+| 方括号表达式 | 说明                                                         |
+| ------------ | ------------------------------------------------------------ |
+| 表示枚举     | 例如[abc]表示a、b、c中任意一个字符                           |
+| 表示范围     | 例如[a-f]表示a~f范围内的任意字符。[a-cx-z]表示a~c、x~z范围内的任意字符 |
+| 表示求否：^  | 例如\[^abc]表示非a、b、c的任意字符。\[^a-f]表示不是a~f范围内的任意字符 |
+
+| 边界匹配符 | 说明                                   |
+| ---------- | -------------------------------------- |
+| \b         | 单词的边界，只能匹配单词前后的空白     |
+| \B         | 非单词的边界只能匹配不在单词前后的空白 |
+| \A         | 只匹配字符串的开头                     |
+| \Z         | 只匹配字符串的结尾                     |
+
+   {}表示出现的次数。频度限定之后加问号贪婪模式变勉强模式
+
    
 
-7. 123
+7. 容器相关类
+
+   frozenset是set的不可变版本，它的元素是不可变的
+
+   ```python
+   c = {'白骨精'}
+   c.add("孙悟空")
+   c.add(6)
+   print("c集合的元素个数为:" , len(c))
+   c.remove(6)
+   print("c集合的元素个数为:" , len(c))
+   print("c集合是否包含'孙悟空'字符串:" , ("孙悟空" in c))
+   c.add("轻量级Java EE企业应用实战")
+   print("c集合的元素：" , c)
+   books = set()
+   books.add("轻量级Java EE企业应用实战")
+   books.add("疯狂Java讲义")
+   print("books集合的元素：" , books)
+   print("books集合是否为c的子集合？", books.issubset(c))
+   print("books集合是否为c的子集合？", (books <= c))
+   print("c集合是否完全包含books集合？", c.issuperset(books))
+   print("c集合是否完全包含books集合？", (c >= books))
+   result1 = c - books
+   print(result1)
+   result2 = c.difference(books)
+   print(result2)
+   c.difference_update(books)
+   print("c集合的元素：" , c)
+   c.clear()
+   print("c集合的元素：" , c)
+   d = {"疯狂Java讲义", '疯狂Python讲义', '疯狂Kotlin讲义'}
+   print("d集合的元素：" , d)
+   inter1 = d & books
+   print(inter1)
+   inter2 = d.intersection(books)
+   print(inter2)
+   d.intersection_update(books)
+   print("d集合的元素：" , d)
+   e = set(range(5))
+   f = set(range(3, 7))
+   print("e集合的元素：" , e)
+   print("f集合的元素：" , f)
+   xor = e ^ f
+   print('e和f执行xor的结果：', xor)
+   un = e.union(f)
+   print('e和f执行并集的结果：', un)
+   e.update(f)
+   print('e集合的元素：', e)
+   ```
+
+   <=相当于issubset()，判断子集合
+
+   \>=相当于issuperset()，判断父集合
+
+   -相当于用difference()
+
+   &相当于intersection()，交集
+
+   ^，并集减交集
+
+   交集intersection()和intersection_update()，前者不改变集合本身，后者改变第一个集合
+
+   并集union()和update()前者不改变集合本身，后者改变第一个集合
+
+   减法difference()和difference_update()，前者不改变集合本身，后者改变第一个集合
+
+   双端队列的方法：append()、appendleft()、pop()、popleft()、extend()、extendleft()
+
+   ```python
+   from collections import deque
+   stack = deque(('Kotlin', 'Python'))
+   stack.append('Erlang')
+   stack.append('Swift')
+   print('stack中的元素：', stack)
+   print(stack.pop())
+   print(stack.pop())
+   print(stack)
+   ```
+
+   ```python
+   from collections import deque
+   q = deque(('Kotlin', 'Python'))
+   q.append('Erlang')
+   q.append('Swift')
+   print('q中的元素：', q)
+   print(q.popleft())
+   print(q.popleft())
+   print(q)
+   ```
+
+   ```python
+   from collections import deque
+   q = deque(range(5))
+   print('q中的元素：', q)
+   q.rotate()
+   print('q中的元素：', q)
+   q.rotate()
+   print('q中的元素：', q)
+   ```
+
+   heapq类堆操作
+
+   heappush(heap, item)
+
+   heappop(heap)
+
+   heapify(heap)
+
+   heapreplace(heap, x)最小元素弹出，并将元素x入堆
+
+   merge(*iterables, key=None, reverse=False)多个有序堆合并成大的有序堆
+
+   heappushpop(heap, item)item入堆，然后弹出并返回堆中最小的元素
+
+   nlargest(n, iterable, key=None)
+
+   nsmallest(n, iterable, key=None)
+
+   ```python
+   from heapq import *
+   my_data = list(range(10))
+   my_data.append(0.5)
+   print('my_data的元素：', my_data)
+   heapify(my_data)
+   print('应用堆之后my_data的元素：', my_data)
+   heappush(my_data, 7.2)
+   print('添加7.2之后my_data的元素：', my_data)
+   print(heappop(my_data)) # 0
+   print(heappop(my_data)) # 0.5
+   print('弹出两个元素之后my_data的元素：', my_data)
+   print(heapreplace(my_data, 8.1))
+   print('执行replace之后my_data的元素：', my_data)
+   print('my_data中最大的3个元素：', nlargest(3, my_data))
+   print('my_data中最小的4个元素：', nsmallest(4, my_data))
+   ```
+
+   
+
+8. 123
