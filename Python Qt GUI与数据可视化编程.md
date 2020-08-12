@@ -178,17 +178,19 @@
 
    （1）设置字体注意mergeCurrentCharFormat
 
-   （2）QPlainTextEdit的信号copyAvailable，触发时将cut和copy按钮enabled状态设置为信号，paste按钮enabled状态设置为canPaste()
+   （2）QPlainTextEdit的信号copyAvailable，触发时将cut和copy按钮enabled状态设置为信号bool状态，paste按钮enabled状态设置为canPaste()
 
    （3）QPlainTextEdit的信号selectionChanged，触发时将粗体斜体下划线按钮checked设置为currentCharFormat的状态
 
-   
+   ![image-20200812084847801](Python Qt GUI与数据可视化编程.assets/image-20200812084847801.png)
 
 8. ListWidget
 
    （1）注意setFlags，给每个QListWidgetItem设置
 
    （2）右键菜单，触发customContextMenuRequested信号，然后qMenu.exec(QCursor.pos())
+
+   ![image-20200812085530441](Python Qt GUI与数据可视化编程.assets/image-20200812085530441.png)
 
 9. TreeDock
 
@@ -197,6 +199,6 @@
        qTreeView --> |"header()"| qHeaderList
    ```
 
-   
+   ![image-20200812085430785](Python Qt GUI与数据可视化编程.assets/image-20200812085430785.png)
 
 10. 123
