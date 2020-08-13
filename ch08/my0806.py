@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt, QDir, QSize, pyqtSignal, QPoint, pyqtSlot, QPointF
 from PyQt5.QtGui import QIcon, QKeyEvent, QBrush, QPolygonF, QPen
 from PyQt5.QtWidgets import QFrame, QFileSystemModel, QGraphicsView, QLabel, QGraphicsScene, QGraphicsItem, \
     QColorDialog, QGraphicsRectItem, QGraphicsEllipseItem, QGraphicsPolygonItem, QGraphicsLineItem, QInputDialog, \
-    QGraphicsTextItem
+    QGraphicsTextItem, QGraphicsItemGroup
 
 
 class Ui_MainWindow():
@@ -241,6 +241,114 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         item.setFont(font)
         item.setDefaultTextColor(Qt.black)
         self.__setItemProperties(item, "文字")
+
+    @pyqtSlot()
+    def on_qAction1_triggered(self):
+        items = self.scene.selectedItems()
+        cnt = len(items)
+        if cnt==1:
+            item = items[0]
+            item.setScale(0.1+item.scale())
+        else:
+            self.view.scale(1.1, 1.1)
+
+    @pyqtSlot()
+    def on_qAction2_triggered(self):
+        items = self.scene.selectedItems()
+        cnt = len(items)
+        if cnt==1:
+            item = items[0]
+            item.setScale(item.scale()-0.1)
+        else:
+            self.view.scale(0.9, 0.9)
+
+    @pyqtSlot()
+    def on_qAction3_triggered(self):
+        items = self.scene.selectedItems()
+        cnt = len(items)
+        if cnt==1:
+            item = items[0]
+            item.setScale(1)
+            item.setRotation(0)
+        else:
+            self.view.resetTransform()
+
+    @pyqtSlot()
+    def on_qAction4_triggered(self):
+        items = self.scene.selectedItems()
+        cnt = len(items)
+        if cnt == 1:
+            item = items[0]
+            item.setRotation(-30+item.rotation())
+        else:
+            self.view.rotate(-30)
+
+    @pyqtSlot()
+    def on_qAction5_triggered(self):
+        items = self.scene.selectedItems()
+        cnt = len(items)
+        if cnt == 1:
+            item = items[0]
+            item.setRotation(30 + item.rotation())
+        else:
+            self.view.rotate(30)
+
+    @pyqtSlot()
+    def on_qAction6_triggered(self):
+        items = self.scene.selectedItems()
+        cnt = len(items)
+        if cnt>0:
+            item = items[0]
+            self.__frontZz += 1
+            item.setZValue(self.__frontZ)
+
+    @pyqtSlot()
+    def on_qAction7_triggered(self):
+        items = self.scene.selectedItems()
+        cnt = len(items)
+        if cnt>0:
+            item = items[0]
+            self.__backZ -= 1
+            item.setZValue(self.__backZ)
+
+    @pyqtSlot()
+    def on_qAction8_triggered(self):
+        items = self.scene.selectedItems()
+        cnt = len(items)
+        if cnt<=1:
+            return
+        group = QGraphicsItemGroup()
+        self.secne.addItem(group)
+        for i in range(cnt):
+            item = items[i]
+            item.setSelected(False)
+            item.clearFocus()
+            group.addToGroup(item)
+
+        group.setFlag(QGraphicsItem.ItemIsFocusable)
+        group.setFlag(QGraphicsItem.ItemIsMovable)
+        group.setFlag(QGraphicsItem.ItemIsSelectable)
+
+        self.__frontZ += 1
+        group.setZValue(self.__frontZ)
+        self.scene.clearSelection()
+        group.setSelected(True)
+
+    @pyqtSlot()
+    def on_qAction9_triggered(self):
+        items = self.scene.selectedItems()
+        cnt = len(items)
+        if(cnt==1):
+            group = items[0]
+            self.scene.destroyItemGroup(group)
+
+    @pyqtSlot()
+    def on_qAction10_triggered(self):
+        items = self.scene.selectedItems()
+        cnt = len(items)
+        for i in range(cnt):
+            item = items[i]
+            self.scene.removeItem(item)
 
 
 
