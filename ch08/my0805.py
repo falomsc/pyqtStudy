@@ -69,7 +69,7 @@ class QmyMainWindow(QMainWindow):
 
     def __iniGraphicsSystem(self):
         rect = QRectF(-200, -100, 400, 200)
-        self.scene = QGraphicsScene(rect)
+        self.scene = QGraphicsScene(rect)   # QGraphicsScene默认居中，坐标以rect的坐标为准
         self.view.setScene(self.scene)
         item = QGraphicsRectItem(rect)
         item.setFlag(QGraphicsItem.ItemIsSelectable)
