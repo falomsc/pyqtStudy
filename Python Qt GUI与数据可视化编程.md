@@ -202,3 +202,80 @@
    ![image-20200812085430785](Python Qt GUI与数据可视化编程.assets/image-20200812085430785.png)
 
 10. 123
+
+11. 123
+
+#### 四，Model/View结构
+
+1. FileSys
+
+   ```mermaid
+   graph LR
+       QTableView --> |"setModel"| QFileSystemModel
+       QListView --> |"setModel"| QFileSystemModel
+       QTreeView --> |"setModel"| QFileSystemModel
+   ```
+
+   ```mermaid
+   graph LR
+       QTreeView --> |"Signal clicked(QModelIndex index) from QAbstractItemView"| Slot_ListView.setRootIndex
+       QTreeView --> |"Signal clicked(QModelIndex index) from QAbstractItemView"| Slot_TableView.setRootIndex
+       QTreeView --> |"Signal clicked(QModelIndex index) from QAbstractItemView"| 文件信息
+   ```
+
+   
+
+   
+
+   ![image-20200815091944651](Python Qt GUI与数据可视化编程.assets/image-20200815091944651.png)
+
+   
+
+2. StringList
+
+   ```mermaid
+   graph LR
+       QListView --> |"setModel"| QStringListModel
+   ```
+
+   model的返回值是int
+
+   view的返回值是QModelIndex，用currentIndex()获得
+
+   ![image-20200816003638947](Python Qt GUI与数据可视化编程.assets/image-20200816003638947.png)
+
+3. ItemModel
+
+   ```mermaid
+   graph LR
+       QTableView --> |"setModel"| QStandardItemModel --> |"setItem"| QStandardItem
+       QTableView --> |"setSelectionModel"| QItemSelectionModel
+   ```
+
+   ```mermaid
+   graph LR
+       QItemSelectionModel --> |"Signal currentChanged(QModelIndex current, QModelIndex previous)"| 单元格信息
+   ```
+
+   QItemSelectionModel负责选择，主要方法为hasSelection、selectedIndexes、clearSelection、currentIndex、setCurrentIndex
+
+   ![image-20200816100632162](Python Qt GUI与数据可视化编程.assets/image-20200816100632162.png)
+
+4. Delegate
+
+   ```mermaid
+   graph LR
+       QTableView --> |"setItemDelegateForColumn"| 自定义代理类
+   ```
+
+   自定义代理类必须继承以下四个函数：
+
+   （1）createEditor。返回一个代理QWidget
+
+   （2）setEditorData。已知QAbstractItemModel的值，设置代理QWidget的值
+
+   （3）setModelData。已知代理QWidget的值，设置QAbstractItemModel的值
+
+   （4）updateEditorGeometry。设置显示效果
+
+5. 123
