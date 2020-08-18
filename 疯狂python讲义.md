@@ -1790,3 +1790,82 @@
    
 
 8. 123
+
+9. 123
+
+
+
+#### 第十二章，文件I/O
+
+1. pathlib模块
+
+   ```mermaid
+   graph BT
+   	PurePosixPath --> PurePath
+   	PosixPath --> Path --> PurePath
+   	WindowsPath --> Path
+   	PureWindowsPath --> PurePath
+   ```
+
+   PurePath自动拼接字符串
+
+   ```python
+   from pathlib import *
+   pp = PurePath('setup.py')
+   print(type(pp))
+   pp = PurePath('crazyit', 'some/path', 'info')
+   print(pp)
+   pp = PurePath(Path('crazyit'), Path('info'))
+   print(pp)
+   pp = PurePosixPath('crazyit', 'some/path', 'info')
+   print(pp)
+   pp = PurePath()
+   print(pp)
+   pp = PurePosixPath('/etc', '/usr', 'lib64')
+   print(pp)
+   pp = PureWindowsPath('c:/Windows', 'd:info')
+   print(pp)
+   pp = PureWindowsPath('c:/Windows', '/Program Files')
+   print(pp)
+   pp = PurePath('foo//bar')
+   print(pp)
+   pp = PurePath('foo/./bar')
+   print(pp)
+   pp = PurePath('foo/../bar')
+   print(pp)
+   ```
+
+   UNIX区分大小写，Windows不区分
+
+   ```python
+   print(PurePosixPath('info') == PurePosixPath('INFO'))
+   print(PureWindowsPath('info') == PureWindowsPath('INFO'))
+   print(PurePosixPath('D:') < PurePosixPath('c:'))
+   print(PureWindowsPath('D:') > PureWindowsPath('c'))
+   print(PureWindowsPath('crazyit') == PurePosixPath('crazyit'))
+   # print(PureWindowsPath('info') < PurePosixPath('info'))
+   ```
+
+   PurePath对象通过“/”进行拼接
+
+   ```python
+   pp = PureWindowsPath('abc')
+   print(pp / 'xyz' / 'wawa')
+   pp = PurePosixPath('abc')
+   print(pp / 'xyz' / 'wawa')
+   pp2 = PurePosixPath('haha', 'hehe')
+   print(pp / pp2)
+   ```
+
+   转str
+
+   ```python
+   pp = PureWindowsPath('abc', 'xyz', 'wawa')
+   print(str(pp))
+   pp = PurePosixPath('abc', 'xyz', 'swawa')
+   print(str(pp))
+   ```
+
+   
+
+2. 1213

@@ -1,9 +1,11 @@
 import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt, pyqtSlot
+from PyQt5.QtCore import Qt, pyqtSlot, QItemSelectionModel
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtSql import QSqlDatabase, QSqlTableModel
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QDoubleSpinBox, QAbstractItemView, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QDoubleSpinBox, QAbstractItemView, QFileDialog, QMessageBox, \
+    QDataWidgetMapper, QComboBox
 
 
 class Ui_MainWindow(object):
@@ -381,6 +383,32 @@ class QmyFloatSpinDelegate(QStyledItemDelegate):
         editor.setGeometry(option.rect)
 
 
+class QmyComboBoxDelegate(QStyledItemDelegate):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.__itemList = []
+        self.__isEditable = False
+
+    def setItems(self, itemList, isEditable=False):
+        self.__itemList=itemList
+        self.__isEditable=isEditable
+
+    def createEditor(self, parent: QWidget, option: 'QStyleOptionViewItem', index: QtCore.QModelIndex) -> QWidget:
+        editor = QComboBox(parent)
+        editor.setFrame(False)
+        editor.setEditable(self.__isEditable)
+        editor.addItems(self.__itemList)
+        return editor
+
+    def setEditorData(self, editor: QWidget, index: QtCore.QModelIndex) -> None:
+        model = index.model()
+        text = model.data(index, Qt.EditRole)
+        editor.setCurrentText(text)
+
+    def updateEditorGeometry(self, editor: QWidget, option: 'QStyleOptionViewItem', index: QtCore.QModelIndex) -> None:
+        editor.setGeometry(option.rect)
+
+
 class QmyMainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -404,6 +432,62 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             return
         self.__getFieldNames()
 
+        self.tabModel.setHeaderData(self.fldNum["empNo"], Qt.Horizontal, "工号")
+        self.tabModel.setHeaderData(self.fldNum["Name"], Qt.Horizontal, "姓名")
+        self.tabModel.setHeaderData(self.fldNum["Gender"], Qt.Horizontal, "性别")
+        self.tabModel.setHeaderData(self.fldNum["Birthday"], Qt.Horizontal, "出生日期")
+        self.tabModel.setHeaderData(self.fldNum["Province"], Qt.Horizontal, "省份")
+        self.tabModel.setHeaderData(self.fldNum["Department"], Qt.Horizontal, "部门")
+        self.tabModel.setHeaderData(self.fldNum["Salary"], Qt.Horizontal, "工资")
+        self.tabModel.setHeaderData(self.fldNum["Memo"], Qt.Horizontal, "备注")
+        self.tabModel.setHeaderData(self.fldNum["Photo"], Qt.Horizontal, "照片")
+
+        self.mapper = QDataWidgetMapper()
+        self.mapper.setModel(self.tabModel)
+        self.mapper.setSubmitPolicy(QDataWidgetMapper.AutoSubmit)
+        self.mapper.addMapping(self.ui.dbSpinEmpNo, self.fldNum["empNo"])
+        self.mapper.addMapping(self.ui.dbEditName, self.fldNum["Name"])
+        self.mapper.addMapping(self.ui.dbComboSex, self.fldNum["Gender"])
+        self.mapper.addMapping(self.ui.dbEditBirth, self.fldNum["Birthday"])
+        self.mapper.addMapping(self.ui.dbComboProvince, self.fldNum["Province"])
+        self.mapper.addMapping(self.ui.dbComboDep, self.fldNum["Department"])
+        self.mapper.addMapping(self.ui.dbSpinSalary, self.fldNum["Salary"])
+        self.mapper.addMapping(self.ui.dbEditMemo, self.fldNum["Memo"])
+        self.mapper.toFirst()
+
+        self.selModel = QItemSelectionModel(self.tabModel)
+        self.selModel.currentChanged.connect(self.do_currentChanged)
+        self.selModel.currentRowChanged.connect(self.do_currentRowChanged)
+
+        self.ui.tableView.setModel(self.tabModel)
+        self.ui.tableView.setSelectionModel(self.selModel)
+
+        self.ui.tableView.setColumnHidden(self.fldNum["Memo"], True)
+        self.ui.tableView.setColumnHidden(self.fldNum["Photo"], True)
+
+
+        strList = ("男", "女")
+        self.__delegatesex = QmyComboBoxDelegate()
+        self.__delegatesex.setItems(strList, False)
+        self.ui.tableView.setItemDelegateForColumn(self.fldNum["Gender"], self.__delegatesex)
+
+        strList = ("销售部", "技术部", "生产部", "行政部")
+        self.__delegateDepart = QmyComboBoxDelegate()
+        self.__delegateDepart.setItems(strList, True)
+        self.ui.tableView.setItemDelegateForColumn(self.fldNum["Department"], self.__delegateDepart)
+
+        self.ui.actOpenDB.setEnabled(False)
+        self.ui.actOpenDB.setEnabled(False)
+
+        self.ui.actRecAppend.setEnabled(True)
+        self.ui.actRecInsert.setEnabled(True)
+        self.ui.actRecDelete.setEnabled(True)
+        self.ui.actScan.setEnabled(True)
+
+        self.ui.groupBoxSort.setEnabled(True)
+        self.ui.groupBoxFilter.setEnabled(True)
+
+
     def __getFieldNames(self):
         emptyRec = self.tabModel.record()
         self.fldNum = {}
@@ -413,6 +497,31 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             self.fldNum.setdefault(fieldName)
             self.fldNum[fieldName]=i
         print(self.fldNum)
+
+    def do_currentChanged(self, current, previous):
+        self.ui.actSubmit.setEnabled(self.tabModel.isDirty())
+        self.ui.actRevert.setEnabled(self.tabModel.isDirty())
+
+    def do_currentRowChanged(self, current, previous):
+        self.ui.actRecDelete.setEnabled(current.isValid())
+        self.ui.actPhoto.setEnabled(current.isValid())
+        self.ui.actPhotoClear.setEnabled(current.isValid())
+
+        if(current.isValid() == False):
+            self.ui.dbLabPhoto.clear()
+            return
+
+        self.mapper.setCurrentIndex(current.row())
+        curRec = self.tabModel.record(current.row())
+
+        if(curRec.isNull("Photo")):
+            self.ui.dbLabPhoto.clear()
+        else:
+            data = curRec.value("Photo")
+            pic = QPixmap()
+            pic.loadFromData(data)
+            w = self.ui.dbLabPhoto.size().width()
+            self.ui.dbLabPhoto.setPixmap(pic.scaledToWidth(w))
 
     @pyqtSlot()
     def on_actOpenDB_triggered(self):

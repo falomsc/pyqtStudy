@@ -268,7 +268,7 @@
        QTableView --> |"setItemDelegateForColumn"| 自定义代理类
    ```
 
-   自定义代理类必须继承以下四个函数：
+   自定义代理类必须继承QStyledItemDelegate类并实现以下四个函数：
 
    （1）createEditor。返回一个代理QWidget
 
