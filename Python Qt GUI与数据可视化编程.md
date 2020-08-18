@@ -279,3 +279,23 @@
    （4）updateEditorGeometry。设置显示效果
 
 5. 123
+
+
+
+#### 七，数据库
+
+1. Table
+
+   打开数据库流程：
+
+   （1）dbFile = QFileDialog.getOpenFileName得到数据库文件名
+
+   （2）db = QSqlDatabase.addDatabase("QSQLITE")，加载SQLite驱动
+
+   （3）db.setDatabaseName(dbFile)，db.open()选择并打开数据库文件
+
+   （4）tabModel=QSqlTableModel(db)，创建数据库对应的Model
+
+   （5）tabModel.setTable，tabModel.select()设置要操作的数据库表，并向Model中填入数据
+
+2. 123
