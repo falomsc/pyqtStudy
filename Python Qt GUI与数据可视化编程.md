@@ -298,4 +298,8 @@
 
    （5）tabModel.setTable，tabModel.select()设置要操作的数据库表，并向Model中填入数据
 
+   （6）tabModel.setHeaderData设置表头
+
+   （7）mapper = QDataWidgetMapper
+
 2. 123
