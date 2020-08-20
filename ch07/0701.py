@@ -405,6 +405,10 @@ class QmyComboBoxDelegate(QStyledItemDelegate):
         text = model.data(index, Qt.EditRole)
         editor.setCurrentText(text)
 
+    def setModelData(self, editor: QWidget, model: QtCore.QAbstractItemModel, index: QtCore.QModelIndex) -> None:
+        text = editor.currentText()
+        model.setData(index, text, Qt.EditRole)
+
     def updateEditorGeometry(self, editor: QWidget, option: 'QStyleOptionViewItem', index: QtCore.QModelIndex) -> None:
         editor.setGeometry(option.rect)
 

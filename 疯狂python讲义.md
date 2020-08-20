@@ -1866,6 +1866,73 @@
    print(str(pp))
    ```
 
+   PurePath的属性和方法：
+
+   drive、root和anchor分别表示盘符、根路径、盘符和根路径
+
+   parents和parent是父路径，parents[0]，parents[1]
+
+   name是文件名
+
+   suffix是后缀，stem是文件名（不带后缀）
+
+   match(pattern)判断当前路径是否匹配指定通配符
+
+   with_name(name)当前路径文件名替换成新文件名
+
+   with_suffix(suffix)当前路径文件后缀名替换成新后缀名
+
+   ```python
+   from pathlib import *
+   
+   p = Path('.')
+   for x in p.iterdir():
+       print(x)
+   p = Path('../')
+   for x in p.glob('**/*.py'):
+       print(x)
+   p = Path('g:/publish/codes')
+   for x in p.glob('**/Path_test1.py'):
+       print(x)
+   ```
+
+   ```python
+   from pathlib import *
+   
+   p = Path('a_test.txt')
+   result = p.write_text('''有一个美丽的新世界
+   它在远方等我
+   哪里有天真的孩子
+   还有姑娘的酒窝''', encoding='GBK')
+   print(result)
+   content = p.read_text(encoding='GBK')
+   print(content)
+   bb = p.read_bytes()
+   print(bb)
+   ```
+
    
 
-2. 1213
+2. 使用os.path操作目录
+
+   ```python
+   import os
+   import time
+   
+   print(os.path.abspath("abc.txt"))
+   print(os.path.commonprefix(['/usr/lib', '/usr/local/lib']))
+   print(os.path.commonpath(['/usr/lib', '/usr/local/lib']))
+   print(os.path.dirname('abc/xyz/README.txt'))
+   print(os.path.exists('abc/xyz/README.txt'))
+   print(time.ctime(os.path.getatime('os.path_test.py')))
+   print(time.ctime(os.path.getmtime('os.path_test.py')))
+   print(time.ctime(os.path.getctime('os.path_test.py')))
+   print(os.path.getsize('os.path_test.py'))
+   print(os.path.isfile('os.path_test.py'))
+   print(os.path.isdir('os.path_test.py'))
+   print(os.path.samefile('os.path_test.py', './os.path_test.py'))
+   ```
+
+   
+
+3. 123

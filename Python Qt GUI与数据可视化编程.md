@@ -296,10 +296,10 @@
 
    （4）tabModel=QSqlTableModel(db)，创建数据库对应的Model
 
-   （5）tabModel.setTable，tabModel.select()设置要操作的数据库表，并向Model中填入数据
+   （5）tabModel.setTable，设置要操作的数据库表，类似SQL create table语句
 
-   （6）tabModel.setHeaderData设置表头
+   （6）tabModel.select()向Model中填入数据，类似SQL insert into语句
 
-   （7）mapper = QDataWidgetMapper
+   （7）QTableView.setModel(tabModel)
 
 2. 123
