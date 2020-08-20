@@ -302,4 +302,12 @@
 
    （7）QTableView.setModel(tabModel)
 
+   QDataWidgetMapper映射数据模型和组件
+
+   （1）mapper= QDataWidgetMapper()
+
+   （2）mapper.setModel(tabModel)
+
+   （3）mapper.addMapping(组件, 列)
+
 2. 123
