@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt, pyqtSlot, QItemSelectionModel
+from PyQt5.QtCore import Qt, pyqtSlot, QItemSelectionModel, QModelIndex, QFile, QIODevice
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtSql import QSqlDatabase, QSqlTableModel
 from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QDoubleSpinBox, QAbstractItemView, QFileDialog, QMessageBox, \
@@ -538,6 +538,99 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             self.__openTable()
         else:
             QMessageBox.warning(self, "错误", "打开数据库失败")
+
+    @pyqtSlot()
+    def on_actSubmit_triggered(self):
+        res = self.tabModel.submitAll()
+        if(res == False):
+            QMessageBox.information(self, "消息", "数据保存错误，错误信息\n" + self.tabModel.lastError().text())
+        else:
+            self.ui.actSubmit.setEnabled(False)
+            self.ui.actRevert.setEnabled(False)
+
+
+    @pyqtSlot()
+    def on_actRevert_triggered(self):
+        self.tabModel.revertAll()
+        self.ui.actSubmit.setEnabled(False)
+        self.ui.actRevert.setEnabled(False)
+
+    @pyqtSlot()
+    def on_actRecAppend_triggered(self):
+        self.tabModel.insertRow(self.tabModel.rowCount(), QModelIndex())
+        curIndex = self.tabModel.index(self.tabModel.rowCount()-1, 1)
+        self.selModel.clearSelection()
+        self.selModel.setCurrentIndex(curIndex, QItemSelectionModel.Select)
+        currow = curIndex.row()
+        self.tabModel.setData(self.tabModel.index(currow, self.fldNum["empNo"]), 2000+self.tabModel.rowCount())
+        self.tabModel.setData(self.tabModel.index(currow, self.fldNum["Gender"]), "男")
+
+    @pyqtSlot()
+    def on_actRecInsert_triggered(self):
+        curIndex = self.ui.tableView.currentIndex()
+        self.tabModel.insertRow(curIndex.row(), QModelIndex())
+        self.selModel.clearSelection()
+        self.selModel.setCurrentIndex(curIndex, QItemSelectionModel.Select)
+
+    @pyqtSlot()
+    def on_actRecDelete_triggered(self):
+        curIndex = self.selModel.currentIndex()
+        self.tabModel.removeRow(curIndex.row())
+
+    @pyqtSlot()
+    def on_actPhotoClear_triggered(self):
+        curRecNo = self.selModel.currentIndex().row()
+        curRec = self.tabModel.record(curRecNo)
+        curRec.setNull("Photo")
+        self.tabModel.setRecord(curRecNo, curRec)
+        self.ui.dbLabPhoto.clear()
+
+    @pyqtSlot()
+    def on_actPhoto_triggered(self):
+        fileName, filt = QFileDialog.getOpenFileName(self, "选择图片文件", "", "照片(*.jpg")
+        if(fileName==''):
+            return
+        file=QFile(fileName)
+        file.open(QIODevice.ReadOnly)
+        try:
+            data = file.readAll()
+        finally:
+            file.close()
+
+        curRecNo = self.selModel.currentIndex().row()
+        curRec = self.tabModel.record(curRecNo)
+        curRec.setValue("Photo", data)
+        self.tabModel.setRecord(curRecNo, curRec)
+
+        pic = QPixmap()
+        pic.loadFromData(data)
+        w = self.ui.dbLabPhoto.width()
+        self.ui.dbLabPhoto.setPixmap(pic.scaledToWidth(w))
+
+    @pyqtSlot()
+    def on_actScan_triggered(self):
+        if(self.tabModel.rowCount()==0):
+            return
+        for i in range(self.tabModel.rowCount()):
+            aRec = self.tabModel.record(i)
+            salary = aRec.value("Salary")
+            salary = salary*1.1
+            aRec.setValue("Salary", salary)
+            self.tabModel.setRecord(i, aRec)
+
+        if(self.tabModel.submitAll()):
+            QMessageBox.information(self, "消息", "涨工资计算完毕了")
+
+    @pyqtSlot()
+    def on_comboFields_currentIndexChanged(self, index):
+        if self.ui.radioBtnAscend.isChecked():
+            self.tabModel.setSort(index, Qt.AscendingOrder)
+        else:
+            self.tabModel.setSort(index, Qt.DescendingOrder)
+        self.tabModel.select()
+
+    @pyqtSlot()
+    def
 
 
 if __name__ == '__main__':
