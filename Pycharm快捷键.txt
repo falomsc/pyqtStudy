@@ -1,0 +1,7 @@
+Ctrl + Enter：在下方新建行但不移动光标
+
+Ctrl + Shift + +：展开所有的代码块；
+
+Ctrl + Shift + -：收缩所有的代码块；
+
+Ctrl + Alt + L：格式化代码

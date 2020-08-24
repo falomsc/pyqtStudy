@@ -630,7 +630,26 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         self.tabModel.select()
 
     @pyqtSlot()
-    def
+    def on_radioBtnAscend_clicked(self):
+        self.tabModel.setSort(self.ui.comboFields.currentIndex(), Qt.AscendingOrder)
+        self.tabModel.select()
+
+    @pyqtSlot()
+    def on_radioBtnDescend_clicked(self):
+        self.tabModel.setSort(self.ui.comboFields.currentIndex(), Qt.DescendingOrder)
+        self.tabModel.select()
+
+    @pyqtSlot()
+    def on_radioBtnMan_clicked(self):
+        self.tabModel.setFilter("Gender='男'")
+
+    @pyqtSlot()
+    def on_radioBtnWoman_clicked(self):
+        self.tabModel.setFilter("Gender='女'")
+
+    @pyqtSlot()
+    def on_radioBtnBoth_clicked(self):
+        self.tabModel.setFilter("")
 
 
 if __name__ == '__main__':
