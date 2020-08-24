@@ -21,7 +21,7 @@ class Ui_MainWindow():
         self.qSplitter = QtWidgets.QSplitter(qMainWindow)
         self.qSplitter.setOrientation(Qt.Horizontal)
         self.qTreeWidget = QtWidgets.QTreeWidget(self.qSplitter)
-        self.qTreeWidget.setMaximumSize(200, 16777215)
+        self.qTreeWidget.setMaximumSize(300, 16777215)
         self.qTabWidget = QtWidgets.QTabWidget(self.qSplitter)
         self.qTabWidget.setTabPosition(QtWidgets.QTabWidget.North)
         self.qTabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
@@ -118,6 +118,34 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.qPixmap = QPixmap()
+        self.setWindowState(Qt.WindowMaximized)
+
+    def setPic(self, picNum, basePath):
+        self.qPixmap.load(basePath+"_1.png")
+        self.ui.qLabelPic1.setPixmap(self.qPixmap)
+        self.ui.qTabWidget.addTab(self.ui.qWidgetTab1, "Before DPD")
+
+        self.qPixmap.load(basePath+"_2.png")
+        self.ui.qLabelPic2.setPixmap(self.qPixmap)
+        self.ui.qTabWidget.addTab(self.ui.qWidgetTab2, "After DPD")
+
+        self.qPixmap.load(basePath+"_3.png")
+        self.ui.qLabelPic3.setPixmap(self.qPixmap)
+        self.ui.qTabWidget.addTab(self.ui.qWidgetTab3, "Spu1")
+
+        self.qPixmap.load(basePath+"_4.png")
+        self.ui.qLabelPic4.setPixmap(self.qPixmap)
+        self.ui.qTabWidget.addTab(self.ui.qWidgetTab4, "Spu2")
+
+        self.qPixmap.load(basePath+"_5.png")
+        self.ui.qLabelPic5.setPixmap(self.qPixmap)
+        self.ui.qTabWidget.addTab(self.ui.qWidgetTab5, "Spu3")
+
+        if(picNum == 6):
+            self.qPixmap.load(basePath + "_6.png")
+            self.ui.qLabelPic6.setPixmap(self.qPixmap)
+            self.ui.qTabWidget.addTab(self.ui.qWidgetTab6, "Spu4")
 
 
     def on_qTreeWidget_itemClicked(self, item: QTreeWidgetItem, column: int):
@@ -144,36 +172,59 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             self.ui.qTabWidget.addTab(self.ui.qWidget1, "N78_TX1 Overview")
 
         ####################  Set B66  ####################
-        if(item is self.ui.qTreeWidget.topLevelItem(0).child(1).child(0)):  # B66_20_L Overview
+        if(item is self.ui.qTreeWidget.topLevelItem(0).child(1).child(0)):  # B66_20_L
             self.ui.qTabWidget.clear()
 
             self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
-            qPixmap = QPixmap()
+            self.setPic(6, ":/pic/B66/B66_20_L")
 
-            qPixmap.load(":/pic/B66/B66_20_L_1.png")
-            self.ui.qLabelPic1.setPixmap(qPixmap)
-            self.ui.qTabWidget.addTab(self.ui.qWidgetTab1, "Before DPD")
+        elif(item is self.ui.qTreeWidget.topLevelItem(0).child(1).child(1)):    # B66_20_M
+            self.ui.qTabWidget.clear()
 
-            qPixmap.load(":/pic/B66/B66_20_L_2.png")
-            self.ui.qLabelPic2.setPixmap(qPixmap)
-            self.ui.qTabWidget.addTab(self.ui.qWidgetTab2, "After DPD")
+            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
+            self.setPic(6, ":/pic/B66/B66_20_M")
 
-            qPixmap.load(":/pic/B66/B66_20_L_3.png")
-            self.ui.qLabelPic3.setPixmap(qPixmap)
-            self.ui.qTabWidget.addTab(self.ui.qWidgetTab3, "Spu1")
+        elif(item is self.ui.qTreeWidget.topLevelItem(0).child(1).child(2)):    # B66_20_H
+            self.ui.qTabWidget.clear()
 
-            qPixmap.load(":/pic/B66/B66_20_L_4.png")
-            self.ui.qLabelPic4.setPixmap(qPixmap)
-            self.ui.qTabWidget.addTab(self.ui.qWidgetTab4, "Spu2")
+            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
+            self.setPic(6, ":/pic/B66/B66_20_H")
 
-            qPixmap.load(":/pic/B66/B66_20_L_5.png")
-            self.ui.qLabelPic5.setPixmap(qPixmap)
-            self.ui.qTabWidget.addTab(self.ui.qWidgetTab5, "Spu3")
+        if(item is self.ui.qTreeWidget.topLevelItem(0).child(2).child(0)):  # B66_20+20_L
+            self.ui.qTabWidget.clear()
 
-            qPixmap.load(":/pic/B66/B66_20_L_6.png")
-            self.ui.qLabelPic6.setPixmap(qPixmap)
-            self.ui.qTabWidget.addTab(self.ui.qWidgetTab6, "Spu4")
+            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
+            self.setPic(5, ":/pic/B66/B66_20+20_L")
 
+        elif(item is self.ui.qTreeWidget.topLevelItem(0).child(2).child(1)):    # B66_20+20_M
+            self.ui.qTabWidget.clear()
+
+            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
+            self.setPic(5, ":/pic/B66/B66_20+20_M")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(0).child(2).child(2)):    # B66_20+20_H
+            self.ui.qTabWidget.clear()
+
+            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
+            self.setPic(5, ":/pic/B66/B66_20+20_H")
+
+        if(item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(0)):  # B66_5+10+gap25+20+10_L
+            self.ui.qTabWidget.clear()
+
+            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
+            self.setPic(5, ":/pic/B66/B66_5+10+gap25+20+10_L")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(1)):    # B66_5+10+gap25+20+10_M
+            self.ui.qTabWidget.clear()
+
+            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
+            self.setPic(5, ":/pic/B66/B66_5+10+gap25+20+10_M")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(2)):    # B66_5+10+gap25+20+10_H
+            self.ui.qTabWidget.clear()
+
+            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
+            self.setPic(5, ":/pic/B66/B66_5+10+gap25+20+10_H")
 
 
 
