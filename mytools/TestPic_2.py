@@ -71,9 +71,16 @@ class Ui_MainWindow():
         self.qWidget1 = QtWidgets.QWidget()
 
 
-        ####################  Basic Information  ####################
+        ####################  Settings  ####################
 
         self.qWidget2 = QtWidgets.QWidget()
+        self.qVboxLayoutS = QtWidgets.QVBoxLayout(self.qWidget2)
+        font = QFont()
+        font.setPixelSize(22)
+        for i in range(1, 12):
+            exec("self.qLabelS%d = QtWidgets.QLabel(self.qWidget2)" % i)
+            exec("self.qVboxLayoutS.addWidget(self.qLabelS%d)" % i)
+            exec("self.qLabelS%d.setFont(font)" % i)
 
         ####################  Pic1~6  ####################
 
@@ -174,7 +181,17 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         ####################  Set B66  ####################
         if(item is self.ui.qTreeWidget.topLevelItem(0).child(1).child(0)):  # B66_20_L
             self.ui.qTabWidget.clear()
-
+            self.ui.qLabelS1.setText("lo = 2110")
+            self.ui.qLabelS2.setText("txnco = 10")
+            self.ui.qLabelS3.setText("freq = 2120")
+            self.ui.qLabelS4.setText("atten = 9.7")
+            self.ui.qLabelS5.setText("cfr = 0.41")
+            self.ui.qLabelS6.setText("orxgain = 225")
+            self.ui.qLabelS7.setText("dpd = Mudra95Coe.txt")
+            self.ui.qLabelS8.setText("peak = 655350")
+            self.ui.qLabelS9.setText("Regularization_D = 20")
+            self.ui.qLabelS10.setText("Regularization_D = 25")
+            self.ui.qLabelS11.setText("Damping = 25")
             self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
             self.setPic(6, ":/pic/B66/B66_20_L")
 
