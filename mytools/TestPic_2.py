@@ -190,7 +190,7 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             self.ui.qLabelS7.setText("dpd = Mudra95Coe.txt")
             self.ui.qLabelS8.setText("peak = 655350")
             self.ui.qLabelS9.setText("Regularization_D = 20")
-            self.ui.qLabelS10.setText("Regularization_D = 25")
+            self.ui.qLabelS10.setText("Regularization_I = 25")
             self.ui.qLabelS11.setText("Damping = 25")
             self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
             self.setPic(6, ":/pic/B66/B66_20_L")
