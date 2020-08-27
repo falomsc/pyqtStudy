@@ -27,7 +27,7 @@ class Ui_MainWindow():
         self.qTabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.qTabWidget.setDocumentMode(True)
         font = QFont()
-        font.setPointSize(15)
+        font.setPointSize(10)
         self.qTabWidget.setFont(font)
         qMainWindow.setCentralWidget(self.qSplitter)
 
@@ -66,11 +66,17 @@ class Ui_MainWindow():
                 m += 1
             n += 1
 
-        ####################  QTabWidget  ####################
-
 
         ####################  Overview  ####################
         self.qWidget1 = QtWidgets.QWidget()
+        self.qVboxLayout = QtWidgets.QVBoxLayout(self.qWidget1)
+        self.qLabel1 = QtWidgets.QLabel(self.qWidget1)
+        self.qLabel2 = QtWidgets.QLabel(self.qWidget1)
+        self.qLabel3 = QtWidgets.QLabel(self.qWidget1)
+        self.qLabel4 = QtWidgets.QLabel(self.qWidget1)
+        self.qVboxLayout.addWidget(self.qLabel1)
+        self.qVboxLayout.addWidget(self.qLabel2)
+        self.qVboxLayout.addWidget(self.qLabel3)
 
 
         ####################  Settings  ####################
@@ -81,8 +87,8 @@ class Ui_MainWindow():
         self.qTableWidget.setAlternatingRowColors(True)
         self.qTableWidget.setRowCount(12)
         self.qTableWidget.setColumnCount(2)
-        self.qTableWidget.setColumnWidth(0, 150)
-        self.qTableWidget.setColumnWidth(1, 150)
+        self.qTableWidget.setColumnWidth(0, 200)
+        self.qTableWidget.setColumnWidth(1, 200)
         self.qTableWidget.horizontalHeader().setVisible(False)
 
         self.qVboxLayoutS.addWidget(self.qTableWidget)
@@ -160,6 +166,19 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             self.ui.qLabelPic6.setPixmap(self.qPixmap)
             self.ui.qTabWidget.addTab(self.ui.qWidgetTab6, "Spu4")
 
+    def setOverview(self, band):
+        self.ui.qTabWidget.clear()
+        dict = {"B66":0, "B7":1, "N78":2}
+        data = xlrd.open_workbook("./TestReport.xlsx")
+        table = data.sheet_by_name("Overview")
+        self.ui.qLabel1.setText(table.cell_value(dict[band], 1))
+        self.ui.qLabel2.setText(table.cell_value(dict[band], 2))
+        self.ui.qLabel3.setText(table.cell_value(dict[band], 3))
+        if band == "N78":
+            self.ui.qLabel4.setText(table.cell_value(dict[band], 3))
+            self.ui.qVboxLayout.addWidget(self.ui.qLabel4)
+
+
     def setSettings(self, band, row, picNum, basePath):
         self.ui.qTabWidget.clear()
         data = xlrd.open_workbook("./TestReport.xlsx")
@@ -176,6 +195,7 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             self.ui.qTableWidget.setItem(i, 1, item)
         self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
         self.setPic(picNum, basePath)
+        self.ui.qTabWidget.addTab(self.ui.qWidget1, band+" Overview")
 
 
 
@@ -183,9 +203,8 @@ class QmyMainWindow(QtWidgets.QMainWindow):
 
         ####################  Set Overview  ####################
         if(item is self.ui.qTreeWidget.topLevelItem(0).child(0)):   # B66 Overview
-            self.ui.qTabWidget.clear()
-
-            self.ui.qTabWidget.addTab(self.ui.qWidget1, "B66 Overview")
+            # self.setOverview("B66")
+            pass
 
         elif(item is self.ui.qTreeWidget.topLevelItem(1).child(0)): # B7 Overview
             self.ui.qTabWidget.clear()
