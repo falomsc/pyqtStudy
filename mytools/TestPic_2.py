@@ -7,7 +7,7 @@ qMainWindow(qSplitter)
             |--qLabel
 
 '''
-import sys
+import sys, xlrd
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import QRect, Qt, QSize, pyqtSlot
 from PyQt5.QtGui import QIcon, QCursor, QFont, QPixmap, QImage
@@ -67,20 +67,23 @@ class Ui_MainWindow():
 
 
         ####################  Overview  ####################
-
         self.qWidget1 = QtWidgets.QWidget()
 
 
         ####################  Settings  ####################
-
         self.qWidget2 = QtWidgets.QWidget()
         self.qVboxLayoutS = QtWidgets.QVBoxLayout(self.qWidget2)
-        font = QFont()
-        font.setPixelSize(22)
-        for i in range(1, 12):
-            exec("self.qLabelS%d = QtWidgets.QLabel(self.qWidget2)" % i)
-            exec("self.qVboxLayoutS.addWidget(self.qLabelS%d)" % i)
-            exec("self.qLabelS%d.setFont(font)" % i)
+
+        self.qTableWidget = QtWidgets.QTableWidget(self.qWidget2)
+        self.qTableWidget.setAlternatingRowColors(True)
+        self.qTableWidget.setRowCount(12)
+        self.qTableWidget.setColumnCount(2)
+        self.qTableWidget.setColumnWidth(0, 150)
+        self.qTableWidget.setColumnWidth(1, 150)
+        self.qTableWidget.horizontalHeader().setVisible(False)
+
+        self.qVboxLayoutS.addWidget(self.qTableWidget)
+
 
         ####################  Pic1~6  ####################
 
@@ -154,6 +157,24 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             self.ui.qLabelPic6.setPixmap(self.qPixmap)
             self.ui.qTabWidget.addTab(self.ui.qWidgetTab6, "Spu4")
 
+    def setSettings(self, band, row, picNum, basePath):
+        self.ui.qTabWidget.clear()
+        data = xlrd.open_workbook("./TestReport.xlsx")
+        table = data.sheet_by_name(band)
+        self.ui.qTableWidget.clear()
+        for i in range(12):
+            item = QtWidgets.QTableWidgetItem()
+            item.setText(str(table.cell_value(0, i+2)))
+            item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.ui.qTableWidget.setItem(i, 0, item)
+            item = QtWidgets.QTableWidgetItem()
+            item.setText(str(table.cell_value(row, i+2)))
+            item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.ui.qTableWidget.setItem(i, 1, item)
+        self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
+        self.setPic(picNum, basePath)
+
+
 
     def on_qTreeWidget_itemClicked(self, item: QTreeWidgetItem, column: int):
 
@@ -180,69 +201,97 @@ class QmyMainWindow(QtWidgets.QMainWindow):
 
         ####################  Set B66  ####################
         if(item is self.ui.qTreeWidget.topLevelItem(0).child(1).child(0)):  # B66_20_L
-            self.ui.qTabWidget.clear()
-            self.ui.qLabelS1.setText("lo = 2110")
-            self.ui.qLabelS2.setText("txnco = 10")
-            self.ui.qLabelS3.setText("freq = 2120")
-            self.ui.qLabelS4.setText("atten = 9.7")
-            self.ui.qLabelS5.setText("cfr = 0.41")
-            self.ui.qLabelS6.setText("orxgain = 225")
-            self.ui.qLabelS7.setText("dpd = Mudra95Coe.txt")
-            self.ui.qLabelS8.setText("peak = 655350")
-            self.ui.qLabelS9.setText("Regularization_D = 20")
-            self.ui.qLabelS10.setText("Regularization_I = 25")
-            self.ui.qLabelS11.setText("Damping = 25")
-            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
-            self.setPic(6, ":/pic/B66/B66_20_L")
+            self.setSettings("B66", 1, 6, ":/pic/B66/B66_20_L")
 
         elif(item is self.ui.qTreeWidget.topLevelItem(0).child(1).child(1)):    # B66_20_M
-            self.ui.qTabWidget.clear()
-
-            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
-            self.setPic(6, ":/pic/B66/B66_20_M")
+            self.setSettings("B66", 2, 6, ":/pic/B66/B66_20_M")
 
         elif(item is self.ui.qTreeWidget.topLevelItem(0).child(1).child(2)):    # B66_20_H
-            self.ui.qTabWidget.clear()
+            self.setSettings("B66", 3, 6, ":/pic/B66/B66_20_H")
 
-            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
-            self.setPic(6, ":/pic/B66/B66_20_H")
-
-        if(item is self.ui.qTreeWidget.topLevelItem(0).child(2).child(0)):  # B66_20+20_L
-            self.ui.qTabWidget.clear()
-
-            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
-            self.setPic(5, ":/pic/B66/B66_20+20_L")
+        elif(item is self.ui.qTreeWidget.topLevelItem(0).child(2).child(0)):  # B66_20+20_L
+            self.setSettings("B66", 4, 5, ":/pic/B66/B66_20+20_L")
 
         elif(item is self.ui.qTreeWidget.topLevelItem(0).child(2).child(1)):    # B66_20+20_M
-            self.ui.qTabWidget.clear()
-
-            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
-            self.setPic(5, ":/pic/B66/B66_20+20_M")
+            self.setSettings("B66", 5, 5, ":/pic/B66/B66_20+20_M")
 
         elif(item is self.ui.qTreeWidget.topLevelItem(0).child(2).child(2)):    # B66_20+20_H
-            self.ui.qTabWidget.clear()
+            self.setSettings("B66", 6, 5, ":/pic/B66/B66_20+20_H")
 
-            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
-            self.setPic(5, ":/pic/B66/B66_20+20_H")
-
-        if(item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(0)):  # B66_5+10+gap25+20+10_L
-            self.ui.qTabWidget.clear()
-
-            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
-            self.setPic(5, ":/pic/B66/B66_5+10+gap25+20+10_L")
+        elif(item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(0)):  # B66_5+10+gap25+20+10_L
+            self.setSettings("B66", 7, 5, ":/pic/B66/B66_5+10+gap25+20+10_L")
 
         elif(item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(1)):    # B66_5+10+gap25+20+10_M
-            self.ui.qTabWidget.clear()
-
-            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
-            self.setPic(5, ":/pic/B66/B66_5+10+gap25+20+10_M")
+            self.setSettings("B66", 8, 5, ":/pic/B66/B66_5+10+gap25+20+10_M")
 
         elif(item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(2)):    # B66_5+10+gap25+20+10_H
-            self.ui.qTabWidget.clear()
+            self.setSettings("B66", 9, 5, ":/pic/B66/B66_5+10+gap25+20+10_H")
 
-            self.ui.qTabWidget.addTab(self.ui.qWidget2, "Settings")
-            self.setPic(5, ":/pic/B66/B66_5+10+gap25+20+10_H")
+        ####################  Set B7  ####################
+        if(item is self.ui.qTreeWidget.topLevelItem(1).child(1).child(0)):  # B7_20_L
+            self.setSettings("B7", 1, 6, ":/pic/B7/B7_20_L")
 
+        elif(item is self.ui.qTreeWidget.topLevelItem(1).child(1).child(1)):  # B7_20_M
+            self.setSettings("B7", 2, 6, ":/pic/B7/B7_20_M")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(1).child(1).child(2)):  # B7_20_H
+            self.setSettings("B7", 3, 6, ":/pic/B7/B7_20_H")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(1).child(2).child(0)):  # B7_20+20_L
+            self.setSettings("B7", 4, 6, ":/pic/B7/B7_20+20_L")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(1).child(2).child(1)):  # B7_20+20_M
+            self.setSettings("B7", 5, 6, ":/pic/B7/B7_20+20_M")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(1).child(2).child(2)):  # B7_20+20_H
+            self.setSettings("B7", 6, 6, ":/pic/B7/B7_20+20_H")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(1).child(3).child(0)):  # B7_20+gap30+20_C
+            self.setSettings("B7", 7, 6, ":/pic/B7/B7_20+gap30+20_C")
+
+        ####################  Set N78_TX0  ####################
+        if(item is self.ui.qTreeWidget.topLevelItem(2).child(1).child(0)):  # N78_TX0_100_L
+            self.setSettings("N78_TX0", 1, 5, ":/pic/N78_TX0/N78_TX0_100_L")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(2).child(1).child(1)):  # N78_TX0_100_M
+            self.setSettings("N78_TX0", 2, 5, ":/pic/N78_TX0/N78_TX0_100_M")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(2).child(1).child(2)):  # N78_TX0_100_H
+            self.setSettings("N78_TX0", 3, 5, ":/pic/N78_TX0/N78_TX0_100_H")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(2).child(2).child(0)):  # N78_TX0_100+100_L
+            self.setSettings("N78_TX0", 4, 5, ":/pic/N78_TX0/N78_TX0_100+100_L")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(2).child(2).child(1)):  # N78_TX0_100+100_H
+            self.setSettings("N78_TX0", 5, 5, ":/pic/N78_TX0/N78_TX0_100+100_H")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(2).child(3).child(0)):  # N78_TX0_50+gap90+60_L
+            self.setSettings("N78_TX0", 6, 5, ":/pic/N78_TX0/N78_TX0_50+gap90+60_L")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(2).child(3).child(1)):  # N78_TX0_50+gap90+60_H
+            self.setSettings("N78_TX0", 7, 5, ":/pic/N78_TX0/N78_TX0_50+gap90+60_H")
+
+        ####################  Set N78_TX0  ####################
+        if(item is self.ui.qTreeWidget.topLevelItem(3).child(1).child(0)):  # N78_TX1_100_L
+            self.setSettings("N78_TX1", 1, 5, ":/pic/N78_TX1/N78_TX1_100_L")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(3).child(1).child(1)):  # N78_TX1_100_M
+            self.setSettings("N78_TX1", 2, 5, ":/pic/N78_TX1/N78_TX1_100_M")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(3).child(1).child(2)):  # N78_TX1_100_H
+            self.setSettings("N78_TX1", 3, 5, ":/pic/N78_TX1/N78_TX1_100_H")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(3).child(2).child(0)):  # N78_TX1_100+100_L
+            self.setSettings("N78_TX1", 4, 5, ":/pic/N78_TX1/N78_TX1_100+100_L")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(3).child(2).child(1)):  # N78_TX1_100+100_H
+            self.setSettings("N78_TX1", 5, 5, ":/pic/N78_TX1/N78_TX1_100+100_H")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(3).child(3).child(0)):  # N78_TX1_50+gap90+60_L
+            self.setSettings("N78_TX1", 6, 5, ":/pic/N78_TX1/N78_TX1_50+gap90+60_L")
+
+        elif(item is self.ui.qTreeWidget.topLevelItem(3).child(3).child(1)):  # N78_TX1_50+gap90+60_H
+            self.setSettings("N78_TX1", 7, 5, ":/pic/N78_TX1/N78_TX1_50+gap90+60_H")
 
 
 if __name__ == '__main__':
