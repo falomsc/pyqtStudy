@@ -26,6 +26,9 @@ class Ui_MainWindow():
         self.qTabWidget.setTabPosition(QtWidgets.QTabWidget.North)
         self.qTabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.qTabWidget.setDocumentMode(True)
+        font = QFont()
+        font.setPointSize(15)
+        self.qTabWidget.setFont(font)
         qMainWindow.setCentralWidget(self.qSplitter)
 
         ####################  QTreeWidget  ####################
