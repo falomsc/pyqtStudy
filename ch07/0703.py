@@ -1,10 +1,10 @@
 import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, pyqtSlot, QFile, QIODevice, Qt, QItemSelectionModel
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtSql import QSqlRecord
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtSql import QSqlRecord, QSqlDatabase, QSqlQueryModel, QSqlQuery
+from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 
 class Ui_MainWindow(object):
@@ -334,8 +334,9 @@ class QmyDialogData(QDialog):
         birth_date = QDate.fromString(birth, "yyyy-MM-dd")
         self.ui.editBirth.setDate(birth_date)
 
-        self.ui.comboProvince.setCurrentText(recData.value("province"))
-        self.ui.comboDep.setCurrentText(recData.value("Salary"))
+        self.ui.comboProvince.setCurrentText(recData.value("Province"))
+        self.ui.comboDep.setCurrentText(recData.value("Department"))
+        self.ui.spinSalary.setValue(recData.value("Salary"))
         self.ui.editMemo.setPlainText(recData.value("Memo"))
 
         picData = recData.value("Photo")
@@ -347,6 +348,37 @@ class QmyDialogData(QDialog):
             W = self.ui.LabPhoto.size().width()
             self.ui.LabPhoto.setPixmap(pic.scaledToWidth(W))
 
+    def getRecordData(self):
+        self.__record.setValue("empNo", self.ui.spinEmpNo.value())
+        self.__record.setValue("Name", self.ui.editName.text())
+        self.__record.setValue("Gender", self.ui.comboSex.currentText())
+        self.__record.setValue("Birthday", self.ui.editBirth.date())
+        self.__record.setValue("Province", self.ui.comboProvince.currentText())
+        self.__record.setValue("Department", self.ui.comboDep.currentText())
+        self.__record.setValue("Salary", self.ui.spinSalary.value())
+        self.__record.setValue("Memo", self.ui.editMemo.toPlainText())
+        return self.__record
+
+    @pyqtSlot()
+    def on_btnSetPhoto_clicked(self):
+        fileName, filt = QFileDialog.getOpenFileName(self, "选择图片", "", "照片(*.jpg)")
+        if(fileName == ''):
+            return
+        file = QFile(fileName)
+        file.open(QIODevice.ReadOnly)
+        data = file.readAll()
+        file.close()
+
+        self.__record.setValue("Photo", data)
+        pic = QPixmap()
+        pic.loadFromData(data)
+        W = self.ui.LabPhoto.width()
+        self.ui.LabPhoto.setPixmap(pic.scaledToWidth(W))
+
+    @pyqtSlot()
+    def on_btnClearPhoto_clicked(self):
+        self.ui.LabPhoto.clear()
+        self.__record.setNull("Photo")
 
 
 class QmyMainWindow(QtWidgets.QMainWindow):
@@ -354,6 +386,206 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.setCentralWidget(self.ui.tableView)
+        self.ui.tableView.setAlternatingRowColors(True)
+        self.ui.tableView.verticalHeader().setDefaultSectionSize(22)
+        self.ui.tableView.horizontalHeader().setDefaultSectionSize(60)
+
+    def __getFieldNames(self):
+        emptyRec = self.qryModel.record()
+        self.fldNum = {}
+        for i in range(emptyRec.count()):
+            fieldName = emptyRec.fieldName(i)
+            self.fldNum.setdefault(fieldName)
+            self.fldNum[fieldName] = i
+        print(self.fldNum)
+
+
+    def __openTable(self):
+        self.qryModel = QSqlQueryModel(self)
+        self.qryModel.setQuery('''SELECT empNo, Name, Gender, Birthday, Province, Department, Salary FROM employee ORDER BY empNo''')
+        if self.qryModel.lastError().isValid():
+            QMessageBox.critical(self, "错误", "数据表查询错误,错误信息\n" + self.qryModel.lastError().text())
+            return
+        self.__getFieldNames()
+        self.qryModel.setHeaderData(0, Qt.Horizontal, "工号")
+        self.qryModel.setHeaderData(1, Qt.Horizontal, "姓名")
+        self.qryModel.setHeaderData(2, Qt.Horizontal, "性别")
+        self.qryModel.setHeaderData(3, Qt.Horizontal, "出生日期")
+        self.qryModel.setHeaderData(4, Qt.Horizontal, "省份")
+        self.qryModel.setHeaderData(5, Qt.Horizontal, "部门")
+        self.qryModel.setHeaderData(6, Qt.Horizontal, "工资")
+
+        self.selModel = QItemSelectionModel(self.qryModel)
+        self.selModel.currentRowChanged.connect(self.do_currentRowChanged)
+        self.ui.tableView.setModel(self.qryModel)
+        self.ui.tableView.setSelectionModel(self.selModel)
+        self.ui.actOpenDB.setEnabled(False)
+        self.ui.actRecInsert.setEnabled(True)
+        self.ui.actRecDelete.setEnabled(True)
+        self.ui.actRecEdit.setEnabled(True)
+        self.ui.actScan.setEnabled(True)
+        self.ui.actTestSQL.setEnabled(True)
+
+
+    def __updateRecord(self, recNo):
+        curRec = self.qryModel.record(recNo)
+        empNo = curRec.value("EmpNo")
+        query = QSqlQuery(self.DB)
+        query.prepare("SELECT * FROM employee WHERE EmpNo = :ID")
+        query.bindValue(":ID", empNo)
+        query.exec()
+        query.first()
+        if(not query.isValid()):
+            return
+
+        curRec = query.record()
+        dlgData = QmyDialogData(self)
+        dlgData.setUpdateRecord(curRec)
+        ret = dlgData.exec()
+        if(ret != QDialog.Accepted):
+            return
+
+        recData = dlgData.getRecordData()
+        query.prepare('''UPDATE employee SET Name=:Name, Gender=:Gender,
+                      Birthday=:Birthday, Province=:Province,
+                      Department=:Department, Salary=:Salary,
+                      Memo=:Memo, Photo=:Photo WHERE EmpNo = :ID''')
+
+        query.bindValue(":Name", recData.value("Name"))
+        query.bindValue(":Gender", recData.value("Gender"))
+        query.bindValue(":Birthday", recData.value("Birthday"))
+        query.bindValue(":Province", recData.value("Province"))
+        query.bindValue(":Department", recData.value("Department"))
+        query.bindValue(":Salary", recData.value("Salary"))
+        query.bindValue(":Memo", recData.value("Memo"))
+        query.bindValue(":Photo", recData.value("Photo"))
+        query.bindValue(":ID", empNo)
+
+        if(not query.exec()):
+            QMessageBox.critical(self, "错误", "记录更新错误\n" + query.lastError().text())
+        else:
+            self.qryModel.query().exec()
+
+
+    @pyqtSlot()
+    def on_actOpenDB_triggered(self):
+        dbFilename, flt = QFileDialog.getOpenFileName(self, "选择数据库文件", "", "SQL Lite数据库(*.db *.db3)")
+        if(dbFilename == ''):
+            return
+        self.DB = QSqlDatabase.addDatabase("QSQLITE")
+        self.DB.setDatabaseName(dbFilename)
+        if self.DB.open():
+            self.__openTable()
+        else:
+            QMessageBox.warning(self, "错误", "打开数据库失败")
+
+
+    @pyqtSlot()
+    def on_actRecInsert_triggered(self):
+        query = QSqlQuery(self.DB)
+        query.exec("select * from employee where EmpNo = -1")
+        curRec = query.record()
+        curRec.setValue("EmpNo", self.qryModel.rowCount() + 3000)
+        dlgData = QmyDialogData(self)
+        dlgData.setInsertRecord(curRec)
+
+        ret = dlgData.exec()
+        if(ret != QDialog.Accepted):
+            return
+
+        recData = dlgData.getRecordData()
+
+        query.prepare('''INSERT INTO employee (EmpNo,Name,Gender,Birthday,
+                    Province,Department,Salary,Memo,Photo)
+                    VALUES(:EmpNo,:Name, :Gender,:Birthday,:Province,
+                    :Department,:Salary,:Memo,:Photo)''')
+        query.bindValue(":EmpNo", recData.value("EmpNo"))
+        query.bindValue(":Name", recData.value("Name"))
+        query.bindValue(":Gender", recData.value("Gender"))
+        query.bindValue(":Birthday", recData.value("Birthday"))
+
+        query.bindValue(":Province", recData.value("Province"))
+        query.bindValue(":Department", recData.value("Department"))
+
+        query.bindValue(":Salary", recData.value("Salary"))
+        query.bindValue(":Memo", recData.value("Memo"))
+        query.bindValue(":Photo", recData.value("Photo"))
+
+        res = query.exec()
+        if(res == False):
+            QMessageBox.critical(self, "错误", "插入记录错误\n" + query.lastError().text())
+        else:
+            sqlStr = self.qryModel.query().executedQuery()
+            self.qryModel.setQuery(sqlStr)
+
+
+    @pyqtSlot()
+    def on_actRecDelete_triggered(self):
+        curRecNo = self.selModel.currentIndex().row()
+        curRec = self.qryModel.record(curRecNo)
+        if(curRec.isEmpty()):
+            return
+        empNo = curRec.value("EmpNo")
+        query = QSqlQuery(self.DB)
+        query.prepare("DELETE  FROM employee WHERE EmpNo = :ID")
+        query.bindValue(":ID", empNo)
+        if(query.exec() == False):
+            QMessageBox.critical(self, "错误", "删除记录出现错误\n" + query.lastError().text())
+        else:
+            sqlStr = self.qryModel.query().executedQuery()
+            self.qryModel.setQuery(sqlStr)
+
+
+    @pyqtSlot()
+    def on_actRecEdit_triggered(self):
+        curRecNo = self.selModel.currentIndex().row()
+        self.__updateRecord(curRecNo)
+
+    def on_tableView_doubleClicked(self, index):
+        curRecNo = index.row()
+        self.__updateRecord(curRecNo)
+
+
+    @pyqtSlot()
+    def on_actScan_triggered(self):
+        qryEmpList = QSqlQuery(self.DB)
+        qryEmpList.exec("SELECT empNo,Salary FROM employee ORDER BY empNo")
+        qryUpdate = QSqlQuery(self.DB)
+        qryUpdate.prepare('''UPDATE employee SET Salary=:Salary WHERE EmpNo = :ID''')
+
+        qryEmpList.first()
+        while(qryEmpList.isValid()):
+            empID = qryEmpList.value("empNo")
+            salary = qryEmpList.value("Salary")
+            salary = salary + 500
+
+            qryUpdate.bindValue(":ID", empID)
+            qryUpdate.bindValue(":Salary", salary)
+            qryUpdate.exec()
+
+            if not qryEmpList.next():
+                break
+        self.qryModel.query().exec()
+        QMessageBox.information(self, "提示", "涨工资计算完毕")
+
+
+    @pyqtSlot()
+    def on_actTestSQL_triggered(self):
+        query = QSqlQuery(self.DB)
+        query.exec('''UPDATE employee SET Salary=500+Salary''')
+        sqlStr = self.qryModel.query().executedQuery()
+        self.qryModel.setQuery(sqlStr)
+        print("SQL OK")
+
+
+    def do_currentRowChanged(self, current, previous):
+        if(current.isValid() == False):
+            return
+        curRec = self.qryModel.record(current.row())
+        empNo = curRec.value("EmpNo")
+        self.ui.statusBar.showMessage("当前记录：工号 = %d" %empNo)
 
 
 if __name__ == '__main__':
