@@ -7,18 +7,20 @@ qMainWindow(qSplitter)
             |--qLabel
 
 '''
-import sys, xlrd
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import QRect, Qt, QSize, pyqtSlot
-from PyQt5.QtGui import QIcon, QCursor, QFont, QPixmap, QImage
-from PyQt5.QtWidgets import QListView, QTreeWidgetItem
+import sys
+import xlrd
 
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QPixmap, QIcon
+from PyQt5.QtWidgets import QTreeWidgetItem
 
 # ./pic/B66/B66_5+10+gap25+20+10_H_1.png
 
 class Ui_MainWindow():
     def setupUi(self, qMainWindow):
         qMainWindow.resize(800, 600)
+        qMainWindow.setWindowTitle("PA Test Report")
         self.qSplitter = QtWidgets.QSplitter(qMainWindow)
         self.qSplitter.setOrientation(Qt.Horizontal)
         self.qTreeWidget = QtWidgets.QTreeWidget(self.qSplitter)
@@ -31,12 +33,13 @@ class Ui_MainWindow():
         font.setPointSize(10)
         self.qTabWidget.setFont(font)
         qMainWindow.setCentralWidget(self.qSplitter)
+        qMainWindow.setWindowIcon(QIcon("./Pic/icon.png"))
 
         ####################  QTreeWidget  ####################
         self.qTreeWidget.setColumnCount(1)
         self.qTreeWidget.headerItem().setText(0, "测试报告")
 
-        detail = {"B66": ("Overview", "20", "20+20", "5+10+gap25+20+10"),
+        detail = {"B66": ("Overview", "20", "20+20", "20+10+5+10", "5+10+gap25+20+10"),
                   "B7": ("Overview", "20", "20+20", "20+gap30+20"),
                   "N78_TX0_without_filter": ("Overview", "100", "100+100", "50+gap90+60"),
                   "N78_TX0_with_filter": ("Overview", "100", "100+100", "50+gap90+60"),
@@ -53,7 +56,7 @@ class Ui_MainWindow():
                 exec("item%d_%d = QtWidgets.QTreeWidgetItem(item%d)" % (n, m, n))
                 exec("item%d_%d.setText(0, '%s')" % (n, m, i))
                 if (i != "Overview"):
-                    if (i in ("20", "20+20", "100", "5+10+gap25+20+10")):
+                    if (i in ("20", "20+20", "100", "5+10+gap25+20+10", "20+10+5+10")):
                         k = 1
                         for j in ("L", "M", "H"):
                             exec("item%d_%d_%d = QtWidgets.QTreeWidgetItem(item%d_%d)" % (n, m, k, n, m))
@@ -73,14 +76,17 @@ class Ui_MainWindow():
 
         ####################  Overview  ####################
         self.qWidget1 = QtWidgets.QWidget()
-        self.qVboxLayout = QtWidgets.QVBoxLayout(self.qWidget1)
-        self.qLabel1 = QtWidgets.QLabel(self.qWidget1)
-        self.qLabel2 = QtWidgets.QLabel(self.qWidget1)
-        self.qLabel3 = QtWidgets.QLabel(self.qWidget1)
-        self.qLabel4 = QtWidgets.QLabel(self.qWidget1)
-        self.qVboxLayout.addWidget(self.qLabel1)
-        self.qVboxLayout.addWidget(self.qLabel2)
-        self.qVboxLayout.addWidget(self.qLabel3)
+        self.qGroupBox = QtWidgets.QGroupBox(self.qWidget1)
+        self.qGroupBox.setGeometry(0, 0, 250, 300)
+        self.qVboxLayout1 = QtWidgets.QVBoxLayout(self.qGroupBox)
+        self.qLabel1 = QtWidgets.QLabel(self.qGroupBox)
+        self.qLabel2 = QtWidgets.QLabel(self.qGroupBox)
+        self.qLabel3 = QtWidgets.QLabel(self.qGroupBox)
+        self.qLabel4 = QtWidgets.QLabel(self.qGroupBox)
+        self.qVboxLayout1.addWidget(self.qLabel1)
+        self.qVboxLayout1.addWidget(self.qLabel2)
+        self.qVboxLayout1.addWidget(self.qLabel3)
+        self.qVboxLayout1.addWidget(self.qLabel4)
 
         ####################  Settings  ####################
         self.qWidget2 = QtWidgets.QWidget()
@@ -175,9 +181,7 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         self.ui.qLabel1.setText(table.cell_value(dict[band], 1))
         self.ui.qLabel2.setText(table.cell_value(dict[band], 2))
         self.ui.qLabel3.setText(table.cell_value(dict[band], 3))
-        if band == "N78":
-            self.ui.qLabel4.setText(table.cell_value(dict[band], 3))
-            self.ui.qVboxLayout.addWidget(self.ui.qLabel4)
+        self.ui.qLabel4.setText(table.cell_value(dict[band], 4))
         self.ui.qTabWidget.addTab(self.ui.qWidget1, band + " Overview")
 
     def setSettings(self, band, row, picNum, basePath):
@@ -201,34 +205,22 @@ class QmyMainWindow(QtWidgets.QMainWindow):
 
         ####################  Set Overview  ####################
         if (item is self.ui.qTreeWidget.topLevelItem(0).child(0)):  # B66 Overview
-            print("123")
             self.setOverview("B66")
-            # pass
 
         elif (item is self.ui.qTreeWidget.topLevelItem(1).child(0)):  # B7 Overview
-            self.ui.qTabWidget.clear()
-
-            self.ui.qTabWidget.addTab(self.ui.qWidget1, "B7 Overview")
+            self.setOverview("B7")
 
         elif (item is self.ui.qTreeWidget.topLevelItem(2).child(0)):  # N78_TX0_without_filter Overview
-            self.ui.qTabWidget.clear()
-
-            self.ui.qTabWidget.addTab(self.ui.qWidget1, "78_TX0_without_filter Overview")
+            self.setOverview("N78")
 
         elif (item is self.ui.qTreeWidget.topLevelItem(3).child(0)):  # N78_TX0_with_filter Overview
-            self.ui.qTabWidget.clear()
-
-            self.ui.qTabWidget.addTab(self.ui.qWidget1, "N78_TX0_with_filter Overview")
+            self.setOverview("N78")
 
         elif (item is self.ui.qTreeWidget.topLevelItem(4).child(0)):  # N78_TX1_without_filter Overview
-            self.ui.qTabWidget.clear()
-
-            self.ui.qTabWidget.addTab(self.ui.qWidget1, "78_TX1_without_filter Overview")
+            self.setOverview("N78")
 
         elif (item is self.ui.qTreeWidget.topLevelItem(5).child(0)):  # N78_TX1_with_filter Overview
-            self.ui.qTabWidget.clear()
-
-            self.ui.qTabWidget.addTab(self.ui.qWidget1, "N78_TX1_with_filter Overview")
+            self.setOverview("N78")
 
         ####################  Set B66  ####################
         if (item is self.ui.qTreeWidget.topLevelItem(0).child(1).child(0)):  # B66_20_L
@@ -249,14 +241,23 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         elif (item is self.ui.qTreeWidget.topLevelItem(0).child(2).child(2)):  # B66_20+20_H
             self.setSettings("B66", 6, 5, "./pic/B66/B66_20+20_H")
 
-        elif (item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(0)):  # B66_5+10+gap25+20+10_L
-            self.setSettings("B66", 7, 5, "./pic/B66/B66_5+10+gap25+20+10_L")
+        elif (item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(0)):  # B66_20+10+5+10_L
+            self.setSettings("B66", 7, 6, "./pic/B66/B66_20+10+5+10_L")
 
-        elif (item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(1)):  # B66_5+10+gap25+20+10_M
-            self.setSettings("B66", 8, 5, "./pic/B66/B66_5+10+gap25+20+10_M")
+        elif (item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(1)):  # B66_20+10+5+10_M
+            self.setSettings("B66", 8, 6, "./pic/B66/B66_20+10+5+10_M")
 
-        elif (item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(2)):  # B66_5+10+gap25+20+10_H
-            self.setSettings("B66", 9, 5, "./pic/B66/B66_5+10+gap25+20+10_H")
+        elif (item is self.ui.qTreeWidget.topLevelItem(0).child(3).child(2)):  # B66_20+10+5+10_H
+            self.setSettings("B66", 9, 6, "./pic/B66/B66_20+10+5+10_H")
+
+        elif (item is self.ui.qTreeWidget.topLevelItem(0).child(4).child(0)):  # B66_5+10+gap25+20+10_L
+            self.setSettings("B66", 10, 5, "./pic/B66/B66_5+10+gap25+20+10_L")
+
+        elif (item is self.ui.qTreeWidget.topLevelItem(0).child(4).child(1)):  # B66_5+10+gap25+20+10_M
+            self.setSettings("B66", 11, 5, "./pic/B66/B66_5+10+gap25+20+10_M")
+
+        elif (item is self.ui.qTreeWidget.topLevelItem(0).child(4).child(2)):  # B66_5+10+gap25+20+10_H
+            self.setSettings("B66", 12, 5, "./pic/B66/B66_5+10+gap25+20+10_H")
 
         ####################  Set B7  ####################
         if (item is self.ui.qTreeWidget.topLevelItem(1).child(1).child(0)):  # B7_20_L
