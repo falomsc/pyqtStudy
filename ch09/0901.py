@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import pyqtSlot, QDir, QFile, QIODevice
+from PyQt5.QtCore import pyqtSlot, QDir, QFile, QIODevice, QTextStream
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 
@@ -108,28 +108,77 @@ class QmyMainWindow(QtWidgets.QMainWindow):
         if not fileDevice.exists():
             return False
         if not fileDevice.open(QIODevice.ReadOnly | QIODevice.Text):
-            try:
-                self.ui.textEdit.clear()
-                while not fileDevice.atEnd():
-                    qtBytes = fileDevice.readLine()
-                    pyBytes = bytes(qtBytes.data())
-                    lineStr = pyBytes.decode("utf-8")
-                    lineStr = lineStr.strip()
-                    self.ui.textEdit.appendPlainText(lineStr)
-            finally:
-                fileDevice.close()
+            return False
 
-            return True
+        try:
+            self.ui.textEdit.clear()
+            while not fileDevice.atEnd():
+                qtBytes = fileDevice.readLine()
+                pyBytes = bytes(qtBytes.data())
+                lineStr = pyBytes.decode("utf-8")
+                lineStr = lineStr.strip()
+                self.ui.textEdit.appendPlainText(lineStr)
+        finally:
+            fileDevice.close()
+
+        return True
 
 
     def __saveByIODevice(self, fileName):
-        pass
+        fileDevice = QFile(fileName)
+        if not fileDevice.open(QIODevice.ReadOnly | QIODevice.Text):
+            return False
+
+        try:
+            text = self.ui.textEdit.toPlainText()
+            strBytes = text.encode("utf-8")
+            fileDevice.write(strBytes)
+        finally:
+            fileDevice.close()
+
+        return True
 
     def __openByStream(self, fileName):
-        pass
+        fileDevice = QFile(fileName)
+        if not fileDevice.exists():
+            return False
+
+        if not fileDevice.open(QIODevice.ReadOnly | QIODevice.Text):
+            return False
+
+        try:
+            fileStream = QTextStream(fileDevice)
+            fileStream.setAutoDetectUnicode(True)
+            fileStream.setCodec("utf-8")
+
+            self.ui.textEdit.clear()
+            while not fileStream.atEnd():
+                lineStr = fileStream.readLine()
+                self.ui.textEdit.appendPlainText(lineStr)
+
+        finally:
+            fileDevice.close()
+        return True
 
     def __saveByStream(self, fileName):
-        pass
+        fileDevice = QFile(fileName)
+        if not fileDevice.exists():
+            return False
+
+        if not fileDevice.open(QIODevice.ReadOnly | QIODevice.Text):
+            return False
+
+        try:
+            fileStream = QTextStream(fileDevice)
+            fileStream.setAutoDetectUnicode(True)
+            fileStream.setCodec("utf-8")
+
+            text = self.ui.textEdit.toPlainText()
+            fileStream << text
+
+        finally:
+            fileDevice.close()
+        return True
 
     @pyqtSlot()
     def on_actQFile_Open_triggered(self):
@@ -143,6 +192,82 @@ class QmyMainWindow(QtWidgets.QMainWindow):
             self.ui.statusBar.showMessage(fileName)
         else:
             QMessageBox.critical(self,"错误","打开文件失败")
+
+    @pyqtSlot()
+    def on_actQFile_Save_triggered(self):
+        curPath = QDir.currentPath()
+        title = "另存为一个文件"
+        filt = "Python程序(*.py);;C++程序(*.h *.cpp);;文本文件(*.txt);;所有文件(*.*)"
+        fileName , flt = QFileDialog.getSaveFileName(self, title, curPath, filt)
+        if(fileName == ""):
+            return
+        if self.__saveByIODevice(fileName):
+            self.ui.statusBar.showMessage(fileName)
+        else:
+            QMessageBox.critical(self, "错误", "保存文件失败")
+
+    @pyqtSlot()
+    def on_actStream_Open_triggered(self):
+        curPath = QDir.currentPath()
+        title = "打开一个文件"
+        filt = "程序文件(*.h *.cpp *.py);;文本文件(*.txt);;所有文件(*.*)"
+        fileName, flt = QFileDialog.getOpenFileName(self, title, curPath, filt)
+        if(fileName==""):
+            return
+
+        if self.__openByStream(fileName):
+            self.ui.statusBar.showMessage(fileName)
+        else:
+            QMessageBox.critical(self, "错误", "打开文件失败")
+
+    @pyqtSlot()
+    def on_actStream_Save_triggered(self):
+        curPath = QDir.currentPath()
+        title = "另存为一个文件"
+        filt = "Python程序(*.py);;C++程序(*.h *.cpp);;文本文件(*.txt);;所有文件(*.*)"
+        fileName, flt = QFileDialog.getSaveFileName(self, title, curPath, filt)
+        if (fileName == ""):
+            return
+        if self.__saveByStream(fileName):
+            self.ui.statusBar.showMessage(fileName)
+        else:
+            QMessageBox.critical(self, "错误", "保存文件失败")
+
+    @pyqtSlot()
+    def on_actPY_Open_triggered(self):
+        curPath = QDir.currentPath()
+        title = "打开一个文件"
+        filt = "程序文件(*.h *.cpp *.py);;文本文件(*.txt);;所有文件(*.*)"
+        fileName, flt = QFileDialog.getOpenFileName(self, title, curPath, filt)
+        if (fileName == ""):
+            return
+
+        self.ui.textEdit.clear()
+        fileDevice = open(fileName, mode='r', encoding='utf-8')
+        try:
+            for eachLine in fileDevice:
+                lineStr = eachLine.strip()
+                self.ui.textEdit.appendPlainText(lineStr)
+            self.ui.statusBar.showMessage(fileName)
+        finally:
+            fileDevice.close()
+
+    @pyqtSlot()
+    def on_actPY_Save_triggered(self):
+        curPath = QDir.currentPath()
+        title = "另存为一个文件"
+        filt = "Python程序(*.py);;C++程序(*.h *.cpp);;文本文件(*.txt);;所有文件(*.*)"
+        fileName, flt = QFileDialog.getSaveFileName(self, title, curPath, filt)
+        if (fileName == ""):
+            return
+
+        text = self.ui.textEdit.toPlainText()
+        fileDevice = open(fileName, mode='w', encoding='utf-8')
+        try:
+            fileDevice.write(text)
+            self.ui.statusBar.showMessage(fileName)
+        finally:
+            fileDevice.close()
 
 
 if __name__ == '__main__':

@@ -311,3 +311,19 @@
    （3）mapper.addMapping(组件, 列)
 
 2. 123
+
+#### 九，文件
+
+1. TextFile
+
+   文件读写：
+
+   （1）getOpenFIileName得到文件路径fileName
+
+   （2）fileDevice = QFile(fileName)得到QFile对象
+
+   （3）exits和open判断是否存在和读取权限
+
+   （4）while not fileDevice.atEnd()循环，qtBytes = fileDevice.readline()此时返回QByteArrray对象。先转bytes类型，pyBytes = bytes(qtBytes.data())；再指定编码并转换成str类型，lineStr = pyBytes.decode("utf-8")
+
+2. 123
