@@ -1935,4 +1935,124 @@
 
    
 
-3. 123
+3. 使用fnmatch处理文件名匹配
+
+   fnmatch匹配的通配符：*，?，[字符序列]，[!字符序列]
+
+   fnmatch.fnmatch(filename, pattern)
+
+   fnmatch.fnmatchcase(filename, pattern)
+
+   fnmatch.filter(names, pattern)
+
+   fnmatch.trasnslate(pattern)
+
+   ```python
+   from pathlib import *
+   import fnmatch
+   for file in Path('.').iterdir():
+       if fnmatch.fnmatch(file, '*_test.PY'):
+           print(file)
+           
+   names = ['a.py', 'b.py', 'c.py', 'd.py']
+   sub = fnmatch.filter(names, '[ac].py')
+   print(sub)
+   
+   print(fnmatch.translate('?.py'))
+   print(fnmatch.translate('[ac].py'))
+   print(fnmatch.translate('[a-c].py'))
+   ```
+
+   
+
+4. 打开文件
+
+   open(file_name [, access_mode], [, buffering])
+
+   ```python
+   f = open('open_test.py')
+   print(f.encoding)
+   print(f.mode)
+   print(f.closed)
+   print(f.name)
+   ```
+
+   文件打开模式：r，w，a，+，b
+
+   
+
+5. 读取文件
+
+   ```python
+   f = open("test.txt", 'r', True)
+   while True:
+       ch = f.read(1)
+       if not ch: break
+       print(ch, end='')
+   f.close()
+   ```
+
+   ```python
+   f = open("test.txt", 'r', True)
+   print(f.read())
+   f.close()
+   ```
+
+   ```python
+   f = open("test.txt", 'rb', True)
+   print(f.read().decode('utf-8'))
+   f.close()
+   ```
+
+   ```python
+   import codecs
+   f = codecs.open("read_test4.py", 'r', 'utf-8', buffering=True)
+   while True:
+       ch = f.read(1)
+       if not ch: break
+       print(ch, end='')
+   f.close()
+   ```
+
+   ```python
+   import codecs
+   f = codecs.open("readline_test.py", 'r', 'utf-8', buffering=True)
+   while True:
+       line = f.readline()
+       if not line: break
+       print(line, end='')
+   f.close()
+   ```
+
+   ```python
+   import codecs
+   f = codecs.open("readlines_test.py", 'r', 'utf-8', buffering=True)
+   for l in f.readlines():
+       print(l, end='')
+   f.close()
+   ```
+
+   ```python
+   import fileinput
+   for line in fileinput.input(files=('info.txt', 'test.txt')):
+       print(fileinput.filename(), fileinput.filelineno(), line, end='')
+   fileinput.close()
+   ```
+
+   ```python
+   import codecs
+   f = codecs.open("for_file.py", 'r', 'utf-8', buffering=True)
+   for line in f:
+       print(line, end='')
+   f.close()
+   ```
+
+   ```python
+   import sys
+   for line in sys.stdin:
+       print("用户输入：", line, end='')
+   ```
+
+   
+
+6. 1234
