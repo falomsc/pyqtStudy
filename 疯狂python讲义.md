@@ -1637,8 +1637,8 @@
 | 方括号表达式 | 说明                                                         |
 | ------------ | ------------------------------------------------------------ |
 | 表示枚举     | 例如[abc]表示a、b、c中任意一个字符                           |
-| 表示范围     | 例如[a-f]表示a~f范围内的任意字符。[a-cx-z]表示a~c、x~z范围内的任意字符 |
-| 表示求否：^  | 例如\[^abc]表示非a、b、c的任意字符。\[^a-f]表示不是a~f范围内的任意字符 |
+| 表示范围     | 例如[a-f]表示a\~f范围内的任意字符。[a-cx-z]表示a\~c、x\~z范围内的任意字符 |
+| 表示求否：^  | 例如\[\^abc]表示非a、b、c的任意字符。\[^a-f]表示不是a~f范围内的任意字符 |
 
 | 边界匹配符 | 说明                                   |
 | ---------- | -------------------------------------- |
@@ -1983,6 +1983,8 @@
 
 5. 读取文件
 
+   使用open()函数打开文本文件时，程序使用当前操作系统的字符集。使用codecs模块的open()函数打开文件允许指定字符集
+
    ```python
    f = open("test.txt", 'r', True)
    while True:
@@ -2053,6 +2055,70 @@
        print("用户输入：", line, end='')
    ```
 
+   ```python
+   import sys
+   import re
+   mailPattern = r'([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+'\
+       + '[\.][a-z]{2,3}([\.][a-z]{2})?'
+   text = sys.stdin.read()
+   it = re.finditer(mailPattern, text, re.I)
+   for e in it:
+       print(str(e.span()) + "-->" + e.group())
+   ```
+
+   ```python
+   import codecs
+   with codecs.open("readlines_test.py", "r", 'utf-8', buffering=True) as f:
+       for line in f:
+           print(line, end='')
+   ```
+
+   ```python
+   import fileinput
+   with fileinput.input(files=('test.txt', 'info.txt')) as f:
+       for line in f:
+           print(line, end='')
+   ```
+
+   with语句略
+
    
 
-6. 1234
+6. 写文件
+
+   文件对象提供的方法：
+
+   seek(offset [, where])：where为1时代表从文件头，where为1时代表从当前位置，where为2时代表从文件尾
+
+   tell()：文件指针的位置
+
+   ```python
+   f = open('filept_test.py', 'rb')
+   print(f.tell())
+   f.seek(3)
+   print(f.tell())
+   print(f.read(1))
+   print(f.tell())
+   f.seek(5)
+   print(f.tell())
+   f.seek(5, 1)
+   print(f.tell())
+   f.seek(-10, 2)
+   print(f.tell())
+   print(f.read(1))
+   ```
+
+   ```python
+   import os
+   f = open('x.txt', 'w+')
+   f.write('我爱Python' + os.linesep)
+   f.writelines(('土门壁甚坚' + os.linesep,
+                '杏园度亦难。' + os.linesep,
+                '势亦邺城下，' + os.linesep,
+                '纵死时犹宽。' + os.linesep))
+   ```
+
+   
+
+7. 123
+
