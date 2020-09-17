@@ -2110,12 +2110,22 @@
 
    ```python
    import os
-   f = open('x.txt', 'w+')
+   f = open('x.txt', 'a+')
    f.write('我爱Python' + os.linesep)
    f.writelines(('土门壁甚坚' + os.linesep,
                 '杏园度亦难。' + os.linesep,
                 '势亦邺城下，' + os.linesep,
                 '纵死时犹宽。' + os.linesep))
+   ```
+
+   ```python
+   import os
+   f = open('y.txt', 'wb+')
+   f.write(('我爱Python' + os.linesep).encode('utf-8'))
+   f.writelines((('土门壁甚坚' + os.linesep).encode('utf-8'),
+                ('杏园度亦难。' + os.linesep).encode('utf-8'),
+                ('势亦邺城下，' + os.linesep).encode('utf-8'),
+                ('纵死时犹宽。' + os.linesep).encode('utf-8'))
    ```
 
    
