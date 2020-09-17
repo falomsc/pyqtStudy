@@ -2130,5 +2130,21 @@
 
    
 
-7. 123
+7. os模块的文件和目录函数
+
+   ```python
+   import os
+   print(os.getcwd())
+   os.chdir("../12.6")
+   print(os.getcwd())
+   
+   path = 'my_dir'
+   os.mkdir(path, 0o755)
+   path = 'abc/xyz/wawa'
+   os.makedirs(path, 0o755)
+   ```
+
+   
+
+8. 123
 
