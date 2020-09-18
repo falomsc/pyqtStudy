@@ -2142,9 +2142,57 @@
    os.mkdir(path, 0o755)
    path = 'abc/xyz/wawa'
    os.makedirs(path, 0o755)
+   
+   path = 'my_dir'
+   os.rmdir(path)
+   path = "abc/xyz/wawa"
+   os.removedirs(path)
+   
+   path = 'my_dir'
+   os.rename(path, 'your_dir')
+   path = "abc/xyz/wawa"
+   os.renames(path, 'foo/bar/haha')
+   ```
+
+   ```python
+   import os, sys
+   ret = os.access('.', os.F_OK|os.R_OK|os.W_OK|os.X_OK)
+   print("os.F_OK|os.R_OK|os.W_OK|os.X_OK - 返回值：", ret)
+   ret = os.access('os.access_test.py', os.F_OK|os.R_OK|os.W_OK)
+   print("os.F_OK|os.R_OK|os.W_OK - 返回值：", ret)
+   ```
+
+   ```python
+   import os, stat
+   os.chmod('os.chmod_test.py', stat.S_IREAD)
+   ret = os.access('os.chmod_test.py', os.W_OK)
+   print("os.W_OK - 返回值：", ret)
+   ```
+
+   os.lseek(fd, pos, how)：移动文件指针，其中how参数指定从哪里开始移动。如果将how设置为0或者SEEK_SET，则表明从文件开头开始移动；如果将how设置为1或者SEEK_SUR，则表明从文件指针当前位置开始移动；如果将how设为2或SEEK_END，则表明从文件结束处开始移动
+   ```python
+   import os
+   f = os.open('abc.txt', os.O_RDWR|os.O_CREAT)
+   len1 = os.write(f, '水晶潭底银鱼跃，\n'.encode('utf-8'))
+   len2 = os.write(f, '清徐风中碧竿横。\n'.encode('utf-8'))
+   os.lseek(f, 0, os.SEEK_SET)
+   data = os.read(f, len1 + len2)
+   print(data)
+   print(data.decode('utf-8'))
+   os.close(f)
+   ```
+
+   os.symlink(src, dst)：创建从src到dst的符号链接，对应于windows快捷方式
+
+   os.link(src, dst)：创建从src到dst的硬链接。硬链接是UNIX系统的概念，如果在Windows系统中就是复制目标文件
+
+   ```python
+   import os
+   os.symlink('os.link_test.py', 'tt')
+   os.link('os.link_test.py', 'dst')
    ```
 
    
 
-8. 123
+8. 使用tempfile模块生成临时文件和临时目录
 
