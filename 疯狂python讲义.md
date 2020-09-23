@@ -2196,3 +2196,353 @@
 
 8. 使用tempfile模块生成临时文件和临时目录
 
+
+
+#### 第十三章，数据库编程
+
+#### 第十四章，并发编程
+
+1. 线程概述
+
+2. 线程的创建和启动
+
+   ```python
+   import threading
+   
+   def action(max):
+       for i in range(max):
+           print(threading.current_thread().getName() +  " " + str(i))
+   
+   for i in range(100):
+       print(threading.current_thread().getName() +  " " + str(i))
+       if i == 20:
+           t1 =threading.Thread(target=action,args=(100,))
+           t1.start()
+           t2 =threading.Thread(target=action,args=(100,))
+           t2.start()
+   print('主线程执行完成!')
+   ```
+
+   继承Thread类创建线程类
+
+   ```python
+   import threading
+   
+   class FkThread(threading.Thread):
+       def __init__(self):
+           threading.Thread.__init__(self)
+           self.i = 0
+   
+       def run(self):
+           while self.i < 100:
+               print(threading.current_thread().getName() +  " " + str(self.i))
+               self.i += 1
+   
+   for i in range(100):
+       print(threading.current_thread().getName() +  " " + str(i))
+       if i == 20:
+           ft1 = FkThread()
+           ft1.start()
+           ft2 = FkThread()
+           ft2.start()
+   print('主线程执行完成!')
+   ```
+
+   
+
+3. 线程的生命周期
+
+   ```python
+   import threading
+   
+   def action(max):
+       for i in range(max):
+           print(threading.current_thread().name +  " " + str(i))
+           
+   for i in range(100):
+       print(threading.current_thread().name +  " " + str(i))
+       if i == 20:
+           threading.Thread(target=action,args=(100,)).run()
+           threading.Thread(target=action,args=(100,)).run()
+   ```
+
+   生命周期：新建、就绪、运行、死亡
+
+   ```python
+   import threading
+   
+   def action(max):
+       for i in range(max):
+           print(threading.current_thread().name +  " " + str(i))
+           
+   for i in range(100):
+       print(threading.current_thread().name +  " " + str(i))
+       if i == 20:
+           threading.Thread(target=action,args=(100,)).run()
+           threading.Thread(target=action,args=(100,)).run()
+   ```
+
+   
+
+4. 控制线程
+
+   ```python
+   import threading
+   
+   def action(max):
+       for i in range(max):
+           print(threading.current_thread().name + " " + str(i))
+   
+   threading.Thread(target=action, args=(100,), name="新线程").start()
+   for i in range(100):
+       if i == 20:
+           jt = threading.Thread(target=action, args=(100,), name="被Join的线程")
+           jt.start()
+           jt.join()
+       print(threading.current_thread().name + " " + str(i))
+   ```
+
+   后台进程
+
+   ```python
+   import threading
+   
+   def action(max):
+       for i in range(max):
+           print(threading.current_thread().name + "  " + str(i))
+           
+   t = threading.Thread(target=action, args=(100,), name='后台线程')
+   t.daemon = True
+   t.start()
+   for i in range(10):
+       print(threading.current_thread().name + "  " + str(i))
+   ```
+
+   线程暂停可以通过调用time模块的sleep函数
+
+   
+
+5. 线程同步
+
+   ```python
+   import threading
+   import time
+   
+   class Account:
+       def __init__(self, account_no, balance):
+           self.account_no = account_no
+           self.balance = balance
+   
+   def draw(account, draw_amount):
+       if account.balance >= draw_amount:
+           print(threading.current_thread().name\
+               + "取钱成功！吐出钞票:" + str(draw_amount))
+           time.sleep(0.001)
+           account.balance -= draw_amount
+           print("\t余额为: " + str(account.balance))
+       else:
+           print(threading.current_thread().name\
+               + "取钱失败！余额不足！")
+   
+   acct = Account("1234567" , 1000)
+   threading.Thread(name='甲', target=draw , args=(acct , 800)).start()
+   threading.Thread(name='乙', target=draw , args=(acct , 800)).start()
+   ```
+
+   加了RLock锁
+
+   ```python
+   import threading
+   import time
+   
+   class Account:
+       def __init__(self, account_no, balance):
+           self.account_no = account_no
+           self._balance = balance
+           self.lock = threading.RLock()
+   
+       def getBalance(self):
+           return self._balance
+   
+       def draw(self, draw_amount):
+           self.lock.acquire()
+           try:
+               if self._balance >= draw_amount:
+                   print(threading.current_thread().name\
+                       + "取钱成功！吐出钞票:" + str(draw_amount))
+                   time.sleep(0.001)
+                   self._balance -= draw_amount
+                   print("\t余额为: " + str(self._balance))
+               else:
+                   print(threading.current_thread().name\
+                       + "取钱失败！余额不足！")
+           finally:
+               self.lock.release()
+               
+   def draw(account, draw_amount):
+       account.draw(draw_amount)
+       
+   acct = Account("1234567" , 1000)
+   threading.Thread(name='甲', target=draw , args=(acct , 800)).start()
+   threading.Thread(name='乙', target=draw , args=(acct , 800)).start()
+   ```
+
+   死锁
+
+   ```python
+   import threading
+   import time
+   
+   class A:
+       def __init__(self):
+           self.lock = threading.RLock()
+   
+       def foo(self, b):
+           try:
+               self.lock.acquire()
+               print("当前线程名: " + threading.current_thread().name\
+                   + " 进入了A实例的foo()方法" )
+               time.sleep(0.2)
+               print("当前线程名: " + threading.current_thread().name\
+                   + " 企图调用B实例的last()方法")
+               b.last()
+           finally:
+               self.lock.release()
+   
+       def last(self):
+           try:
+               self.lock.acquire()
+               print("进入了A类的last()方法内部")
+           finally:
+               self.lock.release()
+   
+   class B:
+       def __init__(self):
+           self.lock = threading.RLock()
+   
+       def bar(self, a):
+           try:
+               self.lock.acquire()
+               print("当前线程名: " + threading.current_thread().name\
+                   + " 进入了B实例的bar()方法" )
+               time.sleep(0.2)
+               print("当前线程名: " + threading.current_thread().name\
+                   + " 企图调用A实例的last()方法")
+               a.last()
+           finally:
+               self.lock.release()
+   
+       def last(self):
+           try:
+               self.lock.acquire()
+               print("进入了B类的last()方法内部")
+           finally:
+               self.lock.release()
+   
+   a = A()
+   b = B()
+   
+   def init():
+       threading.current_thread().name = "主线程"
+       a.foo(b)
+       print("进入了主线程之后")
+   
+   def action():
+       threading.current_thread().name = "副线程"
+       b.bar(a)
+       print("进入了副线程之后")
+   threading.Thread(target=action).start()
+   init()
+   ```
+
+   
+
+6. 线程通信
+
+   假设系统中有两个线程，这两个线程分别代表存款者和取钱者。现在假设系统有一种特殊的要求，即要求存款者和取钱者不断地重复存款、取钱的动作，而且要求每当存款者将钱存入指定账户后，取钱者就立即取出该笔钱。不允许存款者连续两次存钱，也不允许取钱者连续两次取钱。
+
+   ```python
+   import threading
+   
+   class Account:
+       # 定义构造器
+       def __init__(self, account_no, balance):
+           # 封装账户编号、账户余额的两个成员变量
+           self.account_no = account_no
+           self._balance = balance
+           self.cond = threading.Condition()
+           # 定义代表是否已经存钱的旗标
+           self._flag = False
+   
+       # 因为账户余额不允许随便修改，所以只为self._balance提供getter方法
+       def getBalance(self):
+           return self._balance
+       # 提供一个线程安全的draw()方法来完成取钱操作
+       def draw(self, draw_amount):
+           # 加锁,相当于调用Condition绑定的Lock的acquire()
+           self.cond.acquire()
+           try:
+               # 如果self._flag为假，表明账户中还没有人存钱进去，取钱方法阻塞
+               if not self._flag:
+                   self.cond.wait()
+               else:
+                   # 执行取钱操作
+                   print(threading.current_thread().name
+                       + " 取钱:" +  str(draw_amount))
+                   self._balance -= draw_amount
+                   print("账户余额为：" + str(self._balance))
+                   # 将标识账户是否已有存款的旗标设为False
+                   self._flag = False
+                   # 唤醒其他线程
+                   self.cond.notify_all()
+           # 使用finally块来释放锁
+           finally:
+               self.cond.release()
+       def deposit(self, deposit_amount):
+           # 加锁,相当于调用Condition绑定的Lock的acquire()
+           self.cond.acquire()
+           try:
+               # 如果self._flag为真，表明账户中已有人存钱进去，存钱方法阻塞
+               if self._flag:            # ①
+                   self.cond.wait()
+               else:
+                   # 执行存款操作
+                   print(threading.current_thread().name\
+                       + " 存款:" +  str(deposit_amount))
+                   self._balance += deposit_amount
+                   print("账户余额为：" + str(self._balance))
+                   # 将表示账户是否已有存款的旗标设为True
+                   self._flag = True
+                   # 唤醒其他线程
+                   self.cond.notify_all()
+           # 使用finally块来释放锁
+           finally:
+               self.cond.release()
+   
+   
+   #  定义一个函数，模拟重复max次执行取钱操作
+   def draw_many(account, draw_amount, max):
+       for i in range(max):
+           account.draw(draw_amount)
+   #  定义一个函数，模拟重复max次执行存款操作
+   def deposit_many(account, deposit_amount, max):
+       for i in range(max):
+           account.deposit(deposit_amount)
+   # 创建一个账户
+   acct = Account("1234567" , 0)
+   # 创建、并启动一个“取钱”线程
+   threading.Thread(name="取钱者", target=draw_many,
+       args=(acct, 800, 100)).start()
+   # 创建、并启动一个“存款”线程
+   threading.Thread(name="存款者甲", target=deposit_many,
+       args=(acct , 800, 100)).start()
+   threading.Thread(name="存款者乙", target=deposit_many,
+       args=(acct , 800, 100)).start()
+   threading.Thread(name="存款者丙", target=deposit_many,
+       args=(acct , 800, 100)).start()
+   ```
+
+   
+
+7. 123
+
