@@ -41,7 +41,7 @@ class Ui_Widget():
         self.qLineEdit1.setInputMask("99:99:99;_")
         self.qLineEdit2 = QtWidgets.QLineEdit(self.qGrounpBox1)
         self.qLineEdit2.setInputMask("9999-99-99")
-        self.qLineEdit2.setMinimumSize(QSize(150,0))
+        self.qLineEdit2.setMinimumSize(QSize(150, 0))
         self.qLineEdit3 = QtWidgets.QLineEdit(self.qGrounpBox1)
         self.qLineEdit3.setInputMask("9999-99-99 99:99:99")
         self.qTimeEdit = QtWidgets.QTimeEdit(self.qGrounpBox1)
@@ -100,7 +100,7 @@ class Ui_Widget():
 
 
 class QmyWidget(QtWidgets.QWidget):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Widget()
         self.ui.setupUi(self)
@@ -112,20 +112,21 @@ class QmyWidget(QtWidgets.QWidget):
         self.ui.qDateTimeEdit.setDateTime(curDateTime)
 
     def on_qPushButton2_clicked(self):
-        time = QTime.fromString(self.ui.qLineEdit1.text(),"hh:mm:ss")
+        time = QTime.fromString(self.ui.qLineEdit1.text(), "hh:mm:ss")
         self.ui.qTimeEdit.setTime(time)
 
     def on_qPushButton3_clicked(self):
-        date = QDate.fromString(self.ui.qLineEdit2.text(),"yyyy-MM-dd")
+        date = QDate.fromString(self.ui.qLineEdit2.text(), "yyyy-MM-dd")
         self.ui.qDateEdit.setDate(date)
 
     def on_qPushButton4_clicked(self):
-        datetime = QDateTime.fromString(self.ui.qLineEdit3.text(),"yyyy-MM-dd hh:mm:ss")
+        datetime = QDateTime.fromString(self.ui.qLineEdit3.text(), "yyyy-MM-dd hh:mm:ss")
         self.ui.qDateTimeEdit.setDateTime(datetime)
 
     def on_qCalendarWidget_selectionChanged(self):
         date = self.ui.qCalendarWidget.selectedDate()
         self.ui.qLineEdit4.setText(date.toString("yyyy年M月d日"))
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
